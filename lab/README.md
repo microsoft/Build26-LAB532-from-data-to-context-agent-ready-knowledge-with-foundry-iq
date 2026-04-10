@@ -5,7 +5,7 @@ These instructions are for participants of the **instructor-led** Workshop "Buil
 
 ## Lab Overview
 
-In this hands-on lab, you'll build an Azure AI Search Knowledge Base powered by agentic RAG and extend it with Model Context Protocol (MCP) knowledge sources. You'll connect the Knowledge Base to both indexed enterprise content and live MCP servers, enabling smart, tool-driven source selection across multiple systems. By the end, you'll have a working Agentic Knowledge Base that itself can be consumed as an MCP endpoint and wired into a Microsoft Foundry Agent.
+In this hands-on lab, you'll build an Azure AI Search Knowledge Base and extend it across a refreshed five-part flow: document sources, Fabric IQ, Work IQ, web grounding, and arbitrary MCP servers. By the end, you'll have a flexible KB that blends indexed, structured, web, and tool-based knowledge sources.
 
 ## Pre-Requisites
 
@@ -23,13 +23,16 @@ To get the most out of this lab, you should have a basic understanding of the fo
 
 ## Get Started
 
-To begin, open the **notebooks/** folder and start with **part1-multiple-knowledge-sources.ipynb**. Work through all 5 notebooks sequentially:
+To begin, open the **notebooks/** folder and start with **part1-standard-foundry-iq-kb.ipynb**. Work through all 5 notebooks sequentially:
 
-1. **part1-multiple-knowledge-sources.ipynb** — Build a multi-source knowledge base
-2. **part2-mcp-unauthenticated.ipynb** — Add Microsoft Learn as a live MCP source
-3. **part3-mcp-authenticated.ipynb** — Add GitHub as an authenticated MCP source
-4. **part4-kb-as-mcp-endpoint.ipynb** — Consume KB as an MCP endpoint
-5. **part5-foundry-agent.ipynb** — Wire KB into a Foundry Agent
+1. **part1-standard-foundry-iq-kb.ipynb** — Standard Foundry IQ KB with document sources
+2. **part2-fabric-iq-to-kb.ipynb** — Add Fabric IQ to the KB
+3. **part3-work-iq-to-kb.ipynb** — Add Work IQ to the KB
+4. **part4-web-source-to-kb.ipynb** — Add a web source to the KB
+5. **part5-arbitrary-mcp-servers.ipynb** — Add arbitrary MCP servers such as Learn and GitHub
+
+> [!NOTE]
+> The original MVP Summit notebook set has been preserved under `notebooks/mvp-summit-notebooks/`.
 
 Once you've completed all 5 notebooks, return to this page and select **Next >** to view the wrap-up and summary section.
 

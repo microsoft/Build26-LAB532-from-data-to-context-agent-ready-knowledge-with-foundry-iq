@@ -1,10 +1,10 @@
 # Summary
 
-You've completed the lab on building agentic knowledge bases with Azure AI Search and MCP integration. Through 5 progressive notebooks, you explored how to build multi-source knowledge bases, expose them as MCP endpoints, connect live MCP servers as knowledge sources, and wire everything into a Foundry Agent.
+You've completed the updated lab on building agentic knowledge bases with Azure AI Search and multiple source types. Through 5 progressive notebooks, you built a standard document-backed KB, added Fabric IQ and Work IQ, explored web grounding, and connected arbitrary MCP servers.
 
 ## What you explored
 
-In this lab, you built a knowledge base with indexed enterprise content (HR and health documents), connected non-authenticated (Microsoft Learn) and authenticated (GitHub) MCP servers as live knowledge sources, exposed it as an MCP endpoint for developer tools, and created a Foundry Agent grounded on your knowledge base for conversational AI experiences.
+In this lab, you started with file and indexed blob document sources, then layered in structured and workplace knowledge, tested web-backed grounding, and finished by connecting live MCP servers such as Microsoft Learn and GitHub.
 
 ## Continue learning
 
@@ -25,6 +25,6 @@ Here are some ways to apply what you've learned:
 
 **Integrate with your data** — Replace the sample HR and health insurance indexes with your own enterprise content.
 
-**Build a conversational interface** — Extend the Foundry Agent with additional tools and a chat UI for end users.
+**Build an application experience** — Extend the KB with your own UI, orchestration, or agent layer for end users.
 
-The patterns you explored in this lab form the foundation for building custom copilots, enterprise assistants, and intelligent knowledge applications that combine indexed enterprise data with live external sources through MCP.
+The patterns you explored in this lab form the foundation for building custom copilots, enterprise assistants, and intelligent knowledge applications that combine indexed enterprise data with structured systems, web content, and live external sources through MCP.

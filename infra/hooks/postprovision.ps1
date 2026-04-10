@@ -25,12 +25,12 @@ AZURE_OPENAI_KEY=$openaiKey
 AZURE_OPENAI_CHATGPT_DEPLOYMENT=$($env:AZURE_OPENAI_CHATGPT_DEPLOYMENT)
 AZURE_OPENAI_CHATGPT_MODEL_NAME=gpt-4.1
 
-# Microsoft Foundry Configuration (for Part 5)
+# Optional project configuration
 PROJECT_ENDPOINT=$($env:MICROSOFT_FOUNDRY_PROJECT_ENDPOINT)
 PROJECT_RESOURCE_ID=$($env:MICROSOFT_FOUNDRY_PROJECT_ID)
 PROJECT_CONNECTION_NAME=kb-mcp-connection
 
-# GitHub Token (for Part 4 - authenticated MCP source)
+# GitHub Token (optional for Part 5 MCP server scenarios)
 # GITHUB_TOKEN=
 "@
 

@@ -25,7 +25,7 @@ If you need to sign in to any Azure or Microsoft 365 apps, use the following cre
 
 In this hands-on lab, you'll build an Azure AI Search knowledge base using agentic retrieval and extend it with Model Context Protocol (MCP) knowledge sources. You'll connect the knowledge base to both indexed enterprise content and live MCP servers, enabling grounded, citation-backed answers across multiple systems.
 
-Through 5 progressive notebook exercises, you'll build a multi-source knowledge base, connect multiple MCP servers, consume it as an MCP endpoint, and wire it into a Microsoft Foundry Agent. By the end, you'll have a working agentic knowledge base that can itself be used as an MCP endpoint for tools and agents.
+Through 5 progressive notebook exercises, you'll build a standard document-backed knowledge base, extend it with Fabric IQ and Work IQ, add web grounding, and finish by connecting arbitrary MCP servers. By the end, you'll have a flexible agentic knowledge base that blends multiple source types.
 
 ## Getting started
 
@@ -128,7 +128,7 @@ If the automated environment setup fails, follow these steps to configure your e
 
 **Step 2: Create Python virtual environment**
 
-1. Open the first notebook **notebooks/part1-multiple-knowledge-sources.ipynb**.
+1. Open the first notebook **notebooks/part1-standard-foundry-iq-kb.ipynb**.
 2. Run the first code cell and when prompted to select a kernel, choose **Create New Environment**.
 3. Select **Venv** and then select the **requirements.txt** file in the **notebooks/** folder.
 4. Wait for the virtual environment to be created.
@@ -164,14 +164,14 @@ If you encounter errors related to the GPT model when running notebook cells:
 
 ### Work through the Jupyter notebooks
 
-This lab includes 5 progressive notebooks covering different knowledge base and MCP patterns:
+This lab includes 5 progressive notebooks covering the refreshed knowledge-base plan:
 
-1. **Multi-source knowledge base** — Build a knowledge base over indexed HR and health documents and generate cited answers
-2. **Unauthenticated MCP source** — Connect the Microsoft Learn MCP server as a live knowledge source
-3. **Authenticated MCP source** — Connect the GitHub MCP server with Bearer token authentication
-4. **KB as MCP endpoint** — Consume the knowledge base as an MCP endpoint from GitHub Copilot CLI
-5. **Foundry agent** — Connect the knowledge base to a Microsoft Foundry Agent for conversational AI
+1. **Standard KB with documents** — Build a knowledge base over file and indexed blob sources
+2. **Fabric IQ source** — Add Fabric IQ as a first-class knowledge source
+3. **Work IQ source** — Bring Work IQ into the KB through the best available path
+4. **Web source grounding** — Add a web source and compare grounding behavior
+5. **Arbitrary MCP servers** — Connect live servers such as Microsoft Learn and GitHub
 
-Start with **part1-multiple-knowledge-sources.ipynb** in the **notebooks/** folder and progress through each notebook sequentially.
+Start with **part1-standard-foundry-iq-kb.ipynb** in the **notebooks/** folder and progress through each notebook sequentially.
 
 Once you've completed all 5 notebooks, select **Next** to review key takeaways and next steps.

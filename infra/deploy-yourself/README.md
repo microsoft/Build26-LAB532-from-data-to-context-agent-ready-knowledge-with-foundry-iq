@@ -52,11 +52,11 @@ This will:
 - Fetch API keys and write a `.env` file
 - Create search indexes and upload sample data
 
-> **Note:** After setup, you'll need to manually add `GITHUB_TOKEN` to your `.env` file for Part 4 (authenticated MCP source).
+> **Note:** After setup, you'll need to manually add `GITHUB_TOKEN` to your `.env` file for GitHub-based MCP scenarios in Part 5.
 
 ### 4. Start the Lab
 
-Open the [notebooks](../../notebooks) folder in VS Code and **start with `part1-multiple-knowledge-sources.ipynb`**.
+Open the [notebooks](../../notebooks) folder in VS Code and **start with `part1-standard-foundry-iq-kb.ipynb`**.
 
 ## Cleanup
 
