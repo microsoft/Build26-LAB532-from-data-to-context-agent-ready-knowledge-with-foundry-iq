@@ -7,7 +7,7 @@
 param principalId string
 
 @description('The name prefix for all resources')
-param resourcePrefix string = 'lab006'
+param resourcePrefix string = 'lab532'
 
 @description('The location where all resources will be deployed')
 param location string
