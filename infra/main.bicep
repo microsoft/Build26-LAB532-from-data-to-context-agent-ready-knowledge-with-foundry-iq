@@ -6,6 +6,9 @@
 @description('Principal ID for role assignments (provided by azd)')
 param principalId string
 
+@description('User email/UPN for Fabric capacity administration')
+param fabricAdminUpn string = ''
+
 @description('The name prefix for all resources')
 param resourcePrefix string = 'lab532'
 
@@ -329,3 +332,30 @@ output AZURE_OPENAI_EMBEDDING_DEPLOYMENT string = embeddingModelDeployment.name
 
 @description('Chat model deployment name')
 output AZURE_OPENAI_CHATGPT_DEPLOYMENT string = llmModelDeployment.name
+
+// ===============================================
+// MICROSOFT FABRIC CAPACITY
+// ===============================================
+
+@description('Microsoft Fabric capacity for lakehouse workloads')
+resource fabricCapacity 'Microsoft.Fabric/capacities@2023-11-01' = {
+  name: '${resourcePrefix}fabric${uniqueSuffix}'
+  location: location
+  sku: {
+    name: 'F2'
+    tier: 'Fabric'
+  }
+  properties: {
+    administration: {
+      members: [
+        empty(fabricAdminUpn) ? principalId : fabricAdminUpn
+      ]
+    }
+  }
+}
+
+@description('Fabric capacity name')
+output FABRIC_CAPACITY_NAME string = fabricCapacity.name
+
+@description('Fabric capacity resource ID')
+output FABRIC_CAPACITY_ID string = fabricCapacity.id

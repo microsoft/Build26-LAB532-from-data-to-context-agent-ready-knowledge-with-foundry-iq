@@ -57,3 +57,14 @@ if (Test-Path $createIndexesPath) {
 }
 
 Write-Host "Postprovision complete! Open notebooks/ to start the lab."
+
+# Set up Fabric Lakehouse (if capacity was deployed)
+if ($env:FABRIC_CAPACITY_ID) {
+    Write-Host "Setting up Fabric Lakehouse..."
+    $setupLakehouse = Join-Path $PWD "infra\setup-lakehouse.ps1"
+    if (Test-Path $setupLakehouse) {
+        & $setupLakehouse -CapacityId $env:FABRIC_CAPACITY_ID
+    } else {
+        Write-Host "WARNING: setup-lakehouse.ps1 not found, skipping lakehouse setup"
+    }
+}

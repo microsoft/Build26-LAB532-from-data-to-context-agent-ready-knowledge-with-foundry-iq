@@ -88,6 +88,7 @@ $openaiName          = $outs.AZURE_OPENAI_SERVICE_NAME.value
 $openaiEndpoint      = $outs.AZURE_OPENAI_ENDPOINT.value
 $projectEndpoint     = $outs.MICROSOFT_FOUNDRY_PROJECT_ENDPOINT.value
 $projectResourceId   = $outs.MICROSOFT_FOUNDRY_PROJECT_ID.value
+$fabricCapacityId    = $outs.FABRIC_CAPACITY_ID.value
 
 $searchAdminKey = az rest --method POST `
   --url "https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$resourceGroupName/providers/Microsoft.Search/searchServices/$searchName/listAdminKeys?api-version=2023-11-01" `
@@ -133,6 +134,19 @@ powershell -ExecutionPolicy Bypass -File $setupLocal `
   -OpenAIKey $openaiKey `
   -ProjectEndpoint $projectEndpoint `
   -ProjectResourceId $projectResourceId 2>&1 | Tee-Object -FilePath $logFile -Append
+
+# Set up Fabric Lakehouse
+if ($fabricCapacityId) {
+    Log "Setting up Fabric Lakehouse..."
+    $setupLakehouse = Join-Path $localInfraPath "setup-lakehouse.ps1"
+    if (Test-Path $setupLakehouse) {
+        powershell -ExecutionPolicy Bypass -File $setupLakehouse `
+          -CapacityId $fabricCapacityId 2>&1 | Tee-Object -FilePath $logFile -Append
+        Log "Fabric Lakehouse setup complete"
+    } else {
+        Log "WARNING: setup-lakehouse.ps1 not found, skipping lakehouse"
+    }
+}
 
 Log "=== Background deploy script completed ==="
 '@
