@@ -72,12 +72,22 @@ if (-not (Test-Path $venvPy)) {
 }
 if (-not (Test-Path $venvPy)) { throw "Venv python not found at $venvPy" }
 
+<<<<<<< HEAD
+# Install dependencies (reuse notebooks/requirements.txt which has all needed packages)
+$repoParent = Split-Path $repoRoot -Parent
+$reqFile = Join-Path $repoParent "notebooks" "requirements.txt"
+if (-not (Test-Path $reqFile)) {
+    $reqFile = Join-Path $repoRoot "requirements.txt"
+}
+if (-not (Test-Path $reqFile)) { throw "No requirements file found" }
+=======
 # Install dependencies
 $reqFile = Join-Path $repoRoot "requirements-lakehouse.txt"
 if (-not (Test-Path $reqFile)) {
     $reqFile = Join-Path $repoRoot "requirements.txt"
 }
 if (-not (Test-Path $reqFile)) { throw "requirements file not found" }
+>>>>>>> 8d770ffb375bc971c36971066e11062039d5333d
 
 Write-Host "Installing Python dependencies..."
 & $venvPy -m pip install --upgrade pip --quiet 2>$null
