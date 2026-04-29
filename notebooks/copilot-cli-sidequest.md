@@ -3,7 +3,7 @@
 Each notebook creates a separate Azure AI Search knowledge base. After the retrieve cell succeeds, run the sidequest checkpoint cell. It prints:
 
 1. The KB MCP URL.
-2. The auth header to use for the MCP server. In the hosted preview lab this is usually a short-lived `Authorization: Bearer ...` token from the 72f tenant. If you set `AZURE_SEARCH_AUTH_MODE=api-key` with a valid admin key, the cell prints an `api-key` header instead.
+2. The `api-key` auth header to use for the MCP server.
 3. A ready-to-copy MCP config snippet.
 
 > Do not paste service keys or bearer tokens into GitHub issues, pull requests, chat, or any committed file. Keep them in your local Copilot MCP configuration only.
@@ -27,12 +27,6 @@ copilot --help
 Use the MCP config snippet printed by the notebook checkpoint cell. You can add it through the CLI or paste it into your local MCP config file.
 
 Using the CLI:
-
-```powershell
-copilot mcp add --name lab532-kb --url "<KB MCP URL>" --header "Authorization=Bearer <TOKEN>"
-```
-
-If your notebook checkpoint printed an `api-key` header instead, use:
 
 ```powershell
 copilot mcp add --name lab532-kb --url "<KB MCP URL>" --header "api-key=<SERVICE KEY>"
