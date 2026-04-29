@@ -26,10 +26,10 @@ To get the most out of this lab, you should have a basic understanding of the fo
 To begin, open the **notebooks/** folder and start with **part1-standard-foundry-iq-kb.ipynb**. Work through all 5 notebooks sequentially:
 
 1. **part1-standard-foundry-iq-kb.ipynb** — Build a multi-source KB with the restored HR and health search indexes
-2. **part2-fabric-iq-to-kb.ipynb** — Add MAI Grounding through an MCP knowledge source
-3. **part3-work-iq-to-kb.ipynb** — Add Fabric IQ through a Fabric Ontology knowledge source
-4. **part4-web-source-to-kb.ipynb** — Add Work IQ as a first-party knowledge source
-5. **part5-arbitrary-mcp-servers.ipynb** — Combine Work IQ and Fabric IQ in one KB
+2. **part2-mai-grounding-mcp-kb.ipynb** — Add MAI Grounding through an MCP knowledge source
+3. **part3-fabric-iq-to-kb.ipynb** — Add Fabric IQ through a Fabric Ontology knowledge source
+4. **part4-work-iq-to-kb.ipynb** — Add Work IQ as a first-party knowledge source
+5. **part5-work-iq-fabric-iq-to-kb.ipynb** — Combine Work IQ and Fabric IQ in one KB
 
 > [!NOTE]
 > The original MVP Summit notebook set has been preserved under `notebooks/mvp-summit-notebooks/`.
