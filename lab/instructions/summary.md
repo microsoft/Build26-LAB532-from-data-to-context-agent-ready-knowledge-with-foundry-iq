@@ -1,10 +1,10 @@
 # Summary
 
-You've completed the updated lab on building agentic knowledge bases with Azure AI Search and multiple source types. Through 5 progressive notebooks, you built a standard document-backed KB, added Fabric IQ and Work IQ, explored web grounding, and connected arbitrary MCP servers.
+You've completed the updated lab on building agentic knowledge bases with Azure AI Search and multiple source types. Through 5 progressive notebooks, you built a multi-source document-backed KB, added MAI Grounding through MCP, added Fabric IQ and Work IQ, and combined Work IQ with Fabric IQ.
 
 ## What you explored
 
-In this lab, you started with file and indexed blob document sources, then layered in structured and workplace knowledge, tested web-backed grounding, and finished by connecting live MCP servers such as Microsoft Learn and GitHub.
+In this lab, you started with restored HR and health search indexes, then layered in MAI Grounding, structured Fabric knowledge, workplace knowledge, and a combined Work IQ + Fabric IQ retrieval experience.
 
 ## Continue learning
 

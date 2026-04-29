@@ -52,7 +52,7 @@ This will:
 - Fetch API keys and write a `.env` file
 - Create search indexes and upload sample data
 
-> **Note:** After setup, you'll need to manually add `GITHUB_TOKEN` to your `.env` file for GitHub-based MCP scenarios in Part 5.
+> **Note:** The refreshed hosted lab uses the pre-created `magottei-eastus2euap` service. If you deploy your own environment, update `notebooks/.env` with your service endpoint, admin key, Azure OpenAI endpoint, and model deployment before running the notebooks.
 
 ### 4. Start the Lab
 
