@@ -7,13 +7,20 @@ This script:
 3. Flattens JSON data into CSV files
 4. Uploads CSVs to OneLake (lakehouse Files section)
 5. Loads CSVs as Delta tables using the Load Table API
+6. Creates or updates a Fabric IQ ontology bound to the lakehouse tables
 
 Environment variables (from .env):
-  FABRIC_WORKSPACE_ID  - Your Fabric workspace GUID (required)
+  FABRIC_WORKSPACE_ID  - Existing Fabric workspace GUID
+  FABRIC_CAPACITY_ID   - Fabric capacity GUID or ARM resource ID for workspace creation
+  FABRIC_TENANT_ID     - Microsoft Entra tenant ID for Fabric auth
   LAKEHOUSE_NAME       - Name for the lakehouse (default: zava-diy-lakehouse)
+  FABRIC_ONTOLOGY_ID   - Existing ontology GUID to update, if known
+  FABRIC_ONTOLOGY_NAME - Name for the ontology (default: ZavaDIYOntology)
+  CREATE_ONTOLOGY      - Create/update ontology after table load (default: true)
   INCLUDE_EMBEDDINGS   - Include vector embeddings in products table (default: false)
 """
 
+import base64
 import csv
 import io
 import json
@@ -21,11 +28,11 @@ import os
 import sys
 import time
 import traceback
+import uuid
 from datetime import datetime
-from pathlib import Path
 
 import requests
-from azure.identity import DefaultAzureCredential
+from azure.identity import AzureCliCredential, DefaultAzureCredential
 from azure.storage.filedatalake import DataLakeServiceClient
 from dotenv import load_dotenv
 
@@ -46,7 +53,12 @@ WORKSPACE_ID = os.getenv("FABRIC_WORKSPACE_ID", "")
 LAKEHOUSE_NAME = os.getenv("LAKEHOUSE_NAME", "ZavaDIYLakehouse")
 WORKSPACE_NAME = os.getenv("FABRIC_WORKSPACE_NAME", "ZavaDIYWorkspace")
 FABRIC_CAPACITY_ID = os.getenv("FABRIC_CAPACITY_ID", "")
+FABRIC_TENANT_ID = os.getenv("FABRIC_TENANT_ID") or os.getenv("AZURE_TENANT_ID", "")
+FABRIC_ONTOLOGY_ID = os.getenv("FABRIC_ONTOLOGY_ID", "")
+FABRIC_ONTOLOGY_NAME = os.getenv("FABRIC_ONTOLOGY_NAME", "ZavaDIYOntology")
+CREATE_ONTOLOGY = os.getenv("CREATE_ONTOLOGY", "true").lower() == "true"
 INCLUDE_EMBEDDINGS = os.getenv("INCLUDE_EMBEDDINGS", "false").lower() == "true"
+_CREDENTIAL = None
 
 # Logging
 LOG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "create-lakehouse.log")
@@ -62,17 +74,26 @@ def log_message(message: str):
         f.write(line + "\n")
 
 
+def get_credential():
+    """Get the credential used for Fabric API and OneLake calls."""
+    global _CREDENTIAL
+    if _CREDENTIAL is None:
+        if FABRIC_TENANT_ID:
+            _CREDENTIAL = AzureCliCredential(tenant_id=FABRIC_TENANT_ID)
+        else:
+            _CREDENTIAL = DefaultAzureCredential()
+    return _CREDENTIAL
+
+
 def get_fabric_token() -> str:
     """Get an access token for Fabric API."""
-    credential = DefaultAzureCredential()
-    token = credential.get_token(FABRIC_SCOPE)
+    token = get_credential().get_token(FABRIC_SCOPE)
     return token.token
 
 
 def get_storage_token() -> str:
     """Get an access token for OneLake (Azure Storage)."""
-    credential = DefaultAzureCredential()
-    token = credential.get_token(STORAGE_SCOPE)
+    token = get_credential().get_token(STORAGE_SCOPE)
     return token.token
 
 
@@ -82,6 +103,16 @@ def fabric_headers() -> dict:
         "Authorization": f"Bearer {get_fabric_token()}",
         "Content-Type": "application/json",
     }
+
+
+def fabric_get(url: str) -> requests.Response:
+    """GET helper for Fabric REST APIs."""
+    return requests.get(url, headers=fabric_headers(), timeout=120)
+
+
+def fabric_post(url: str, payload: dict | None = None) -> requests.Response:
+    """POST helper for Fabric REST APIs."""
+    return requests.post(url, headers=fabric_headers(), json=payload, timeout=120)
 
 
 def resolve_capacity_id(capacity_id_or_arm: str) -> str:
@@ -283,9 +314,8 @@ def upload_to_onelake(
     workspace_id: str, lakehouse_id: str, filename: str, data: bytes
 ):
     """Upload a file to the lakehouse Files section via OneLake ADLS SDK."""
-    credential = DefaultAzureCredential()
     service_client = DataLakeServiceClient(
-        account_url=ONELAKE_DFS_URL, credential=credential
+        account_url=ONELAKE_DFS_URL, credential=get_credential()
     )
 
     filesystem_name = workspace_id
@@ -361,6 +391,281 @@ def poll_operation(
     return False
 
 
+def poll_fabric_operation(operation_url: str, timeout: int = 300) -> bool:
+    """Poll a Fabric long-running operation URL until it completes."""
+    if not operation_url:
+        return True
+
+    start = time.time()
+    while time.time() - start < timeout:
+        resp = fabric_get(operation_url)
+        if resp.status_code not in (200, 202):
+            log_message(f"  Operation poll failed: {resp.status_code} - {resp.text}")
+            return False
+
+        data = resp.json() if resp.text else {}
+        status = data.get("status", "")
+        if status == "Succeeded":
+            log_message("  Operation complete (100%)")
+            return True
+        if status == "Failed":
+            log_message(f"  Operation FAILED: {json.dumps(data.get('error', data))}")
+            return False
+
+        retry_after = resp.headers.get("Retry-After")
+        delay = int(retry_after) if retry_after and retry_after.isdigit() else 5
+        time.sleep(delay)
+
+    log_message(f"  Operation TIMEOUT after {timeout}s")
+    return False
+
+
+def create_definition_part(path: str, payload: dict) -> dict:
+    """Create a Fabric item definition part with an inline base64 JSON payload."""
+    json_payload = json.dumps(payload, separators=(",", ":"))
+    encoded = base64.b64encode(json_payload.encode("utf-8")).decode("ascii")
+    return {"path": path, "payload": encoded, "payloadType": "InlineBase64"}
+
+
+def make_entity_parts(
+    entity_id: int,
+    entity_name: str,
+    table_name: str,
+    columns: list[dict],
+    key_property: str,
+    display_property: str,
+    workspace_id: str,
+    lakehouse_id: str,
+) -> list[dict]:
+    """Build ontology entity and lakehouse table binding definition parts."""
+    properties = []
+    property_bindings = []
+    for offset, column in enumerate(columns, start=1):
+        property_id = str((entity_id * 100) + offset)
+        properties.append(
+            {
+                "id": property_id,
+                "name": column["name"],
+                "valueType": column["type"],
+            }
+        )
+        property_bindings.append(
+            {
+                "sourceColumnName": column["source"],
+                "targetPropertyId": property_id,
+            }
+        )
+
+    property_ids = {prop["name"]: prop["id"] for prop in properties}
+    definition = {
+        "id": str(entity_id),
+        "namespace": "usertypes",
+        "baseEntityTypeId": None,
+        "name": entity_name,
+        "entityIdParts": [property_ids[key_property]],
+        "displayNamePropertyId": property_ids[display_property],
+        "namespaceType": "Custom",
+        "visibility": "Visible",
+        "properties": properties,
+        "timeseriesProperties": [],
+    }
+    binding_id = str(uuid.uuid4())
+    binding = {
+        "id": binding_id,
+        "dataBindingConfiguration": {
+            "dataBindingType": "NonTimeSeries",
+            "timestampColumnName": None,
+            "propertyBindings": property_bindings,
+            "sourceTableProperties": {
+                "sourceType": "LakehouseTable",
+                "workspaceId": workspace_id,
+                "itemId": lakehouse_id,
+                "sourceTableName": table_name,
+            },
+        },
+    }
+    return [
+        create_definition_part(f"EntityTypes/{entity_id}/definition.json", definition),
+        create_definition_part(
+            f"EntityTypes/{entity_id}/DataBindings/{binding_id}.json", binding
+        ),
+    ]
+
+
+def build_zava_ontology_definition(workspace_id: str, lakehouse_id: str) -> dict:
+    """Build a Fabric IQ ontology definition for the Zava DIY lakehouse tables."""
+    parts = [
+        create_definition_part(
+            ".platform",
+            {"metadata": {"type": "Ontology", "displayName": FABRIC_ONTOLOGY_NAME}},
+        ),
+        create_definition_part("definition.json", {}),
+    ]
+
+    # Ontology property names must be identifier-safe; source maps to lakehouse column names.
+    entity_specs = [
+        (
+            1001,
+            "Product",
+            "products",
+            [
+                {"name": "sku", "source": "sku", "type": "String"},
+                {"name": "name", "source": "name", "type": "String"},
+                {"name": "category", "source": "category", "type": "String"},
+                {"name": "productType", "source": "product_type", "type": "String"},
+                {"name": "price", "source": "price", "type": "Double"},
+                {"name": "description", "source": "description", "type": "String"},
+                {"name": "stockLevel", "source": "stock_level", "type": "BigInt"},
+                {"name": "imagePath", "source": "image_path", "type": "String"},
+                {
+                    "name": "seasonalMultipliers",
+                    "source": "seasonal_multipliers",
+                    "type": "String",
+                },
+            ],
+            "sku",
+            "name",
+        ),
+        (
+            1002,
+            "Category",
+            "categories",
+            [
+                {"name": "categoryName", "source": "category_name", "type": "String"},
+                {"name": "multiplierJan", "source": "multiplier_jan", "type": "Double"},
+                {"name": "multiplierFeb", "source": "multiplier_feb", "type": "Double"},
+                {"name": "multiplierMar", "source": "multiplier_mar", "type": "Double"},
+                {"name": "multiplierApr", "source": "multiplier_apr", "type": "Double"},
+                {"name": "multiplierMay", "source": "multiplier_may", "type": "Double"},
+                {"name": "multiplierJun", "source": "multiplier_jun", "type": "Double"},
+                {"name": "multiplierJul", "source": "multiplier_jul", "type": "Double"},
+                {"name": "multiplierAug", "source": "multiplier_aug", "type": "Double"},
+                {"name": "multiplierSep", "source": "multiplier_sep", "type": "Double"},
+                {"name": "multiplierOct", "source": "multiplier_oct", "type": "Double"},
+                {"name": "multiplierNov", "source": "multiplier_nov", "type": "Double"},
+                {"name": "multiplierDec", "source": "multiplier_dec", "type": "Double"},
+            ],
+            "categoryName",
+            "categoryName",
+        ),
+        (
+            1003,
+            "Store",
+            "stores",
+            [
+                {"name": "storeName", "source": "store_name", "type": "String"},
+                {"name": "rlsUserId", "source": "rls_user_id", "type": "String"},
+                {
+                    "name": "customerDistributionWeight",
+                    "source": "customer_distribution_weight",
+                    "type": "Double",
+                },
+                {
+                    "name": "orderFrequencyMultiplier",
+                    "source": "order_frequency_multiplier",
+                    "type": "Double",
+                },
+                {
+                    "name": "orderValueMultiplier",
+                    "source": "order_value_multiplier",
+                    "type": "Double",
+                },
+            ],
+            "storeName",
+            "storeName",
+        ),
+        (
+            1004,
+            "YearWeight",
+            "year_weights",
+            [
+                {"name": "year", "source": "year", "type": "BigInt"},
+                {"name": "weight", "source": "weight", "type": "Double"},
+            ],
+            "year",
+            "year",
+        ),
+    ]
+
+    for spec in entity_specs:
+        parts.extend(make_entity_parts(*spec, workspace_id, lakehouse_id))
+
+    return {"definition": {"parts": parts}}
+
+
+def get_existing_ontology(workspace_id: str, name: str) -> dict | None:
+    """Find an existing ontology in the specified workspace by display name."""
+    url = f"{FABRIC_API_BASE}/workspaces/{workspace_id}/ontologies"
+    resp = fabric_get(url)
+    resp.raise_for_status()
+    for ontology in resp.json().get("value", []):
+        if ontology.get("displayName") == name:
+            return ontology
+    return None
+
+
+def create_or_get_ontology(workspace_id: str, name: str) -> dict:
+    """Create a Fabric IQ ontology item, or reuse an existing one with the same name."""
+    if FABRIC_ONTOLOGY_ID:
+        log_message(f"Using existing ontology ID from FABRIC_ONTOLOGY_ID: {FABRIC_ONTOLOGY_ID}")
+        return {"id": FABRIC_ONTOLOGY_ID, "displayName": name}
+
+    existing = get_existing_ontology(workspace_id, name)
+    if existing:
+        log_message(f"Found existing ontology: {existing['id']}")
+        return existing
+
+    url = f"{FABRIC_API_BASE}/workspaces/{workspace_id}/ontologies"
+    payload = {
+        "displayName": name,
+        "description": "Ontology for the Zava DIY lakehouse data.",
+    }
+    log_message(f"Creating ontology '{name}'...")
+    resp = fabric_post(url, payload)
+    if resp.status_code not in (200, 201, 202):
+        log_message(f"ERROR: Failed to create ontology: {resp.status_code} - {resp.text}")
+        sys.exit(1)
+
+    operation_url = resp.headers.get("Location", "")
+    if operation_url and not poll_fabric_operation(operation_url):
+        sys.exit(1)
+
+    # Fabric ontology create can complete asynchronously with an empty response body.
+    for _ in range(12):
+        existing = get_existing_ontology(workspace_id, name)
+        if existing:
+            log_message(f"Ontology created: {existing['id']}")
+            return existing
+        time.sleep(5)
+
+    log_message(f"ERROR: Ontology '{name}' was not found after create completed.")
+    sys.exit(1)
+
+
+def update_ontology_definition(
+    workspace_id: str, ontology_id: str, lakehouse_id: str
+) -> bool:
+    """Replace the ontology definition with Zava DIY lakehouse entity bindings."""
+    url = (
+        f"{FABRIC_API_BASE}/workspaces/{workspace_id}"
+        f"/ontologies/{ontology_id}/updateDefinition"
+    )
+    payload = build_zava_ontology_definition(workspace_id, lakehouse_id)
+    log_message("Updating ontology definition with Zava DIY entity bindings...")
+    resp = fabric_post(url, payload)
+    if resp.status_code not in (200, 202):
+        log_message(
+            f"ERROR: Failed to start ontology definition update: "
+            f"{resp.status_code} - {resp.text}"
+        )
+        return False
+
+    operation_url = resp.headers.get("Location", "")
+    if operation_url:
+        return poll_fabric_operation(operation_url)
+    return True
+
+
 def main():
     """Main execution flow."""
     log_message("=" * 60)
@@ -382,22 +687,26 @@ def main():
 
     log_message(f"Workspace ID: {workspace_id}")
     log_message(f"Lakehouse Name: {LAKEHOUSE_NAME}")
+    log_message(f"Ontology Name: {FABRIC_ONTOLOGY_NAME}")
+    log_message(f"Tenant ID: {FABRIC_TENANT_ID or '(default credential tenant)'}")
     log_message(f"Include Embeddings: {INCLUDE_EMBEDDINGS}")
 
     try:
+        total_steps = 6 if CREATE_ONTOLOGY else 5
+
         # Step 1: Create Lakehouse
-        log_message("\n[1/5] Creating Lakehouse")
+        log_message(f"\n[1/{total_steps}] Creating Lakehouse")
         lakehouse = create_lakehouse(workspace_id, LAKEHOUSE_NAME)
         lakehouse_id = lakehouse["id"]
 
         # Step 2: Get lakehouse properties
-        log_message("\n[2/5] Getting Lakehouse Properties")
+        log_message(f"\n[2/{total_steps}] Getting Lakehouse Properties")
         props = get_lakehouse_properties(workspace_id, lakehouse_id)
         onelake_files = props.get("properties", {}).get("oneLakeFilesPath", "")
         log_message(f"OneLake Files Path: {onelake_files}")
 
         # Step 3: Download and process data
-        log_message("\n[3/5] Downloading and Processing Dataset")
+        log_message(f"\n[3/{total_steps}] Downloading and Processing Dataset")
         product_data = download_json("product_data.json")
         reference_data = download_json("reference_data.json")
 
@@ -412,13 +721,13 @@ def main():
             log_message(f"  {table_name}: {len(rows)} rows")
 
         # Step 4: Upload CSVs to OneLake
-        log_message("\n[4/5] Uploading CSVs to OneLake")
+        log_message(f"\n[4/{total_steps}] Uploading CSVs to OneLake")
         for table_name, (rows, filename) in tables.items():
             csv_data = to_csv_bytes(rows)
             upload_to_onelake(workspace_id, lakehouse_id, filename, csv_data)
 
         # Step 5: Load tables
-        log_message("\n[5/5] Loading Delta Tables")
+        log_message(f"\n[5/{total_steps}] Loading Delta Tables")
         operations = {}
         for table_name, (_, filename) in tables.items():
             poll_url = load_table(workspace_id, lakehouse_id, table_name, filename)
@@ -439,16 +748,35 @@ def main():
         log_message(f"Lakehouse: {LAKEHOUSE_NAME} ({lakehouse_id})")
         log_message(f"Workspace: {workspace_id}")
         log_message("Tables loaded:")
-        for table_name, success in results.items():
+        for table_name in tables:
+            success = results.get(table_name, False)
             status = "SUCCESS" if success else "FAILED"
             log_message(f"  {status}: {table_name}")
+        table_success = set(results) == set(tables) and all(results.values())
+
+        ontology = None
+        ontology_success = True
+        if CREATE_ONTOLOGY and table_success:
+            log_message(f"\n[6/{total_steps}] Creating Fabric IQ Ontology")
+            ontology = create_or_get_ontology(workspace_id, FABRIC_ONTOLOGY_NAME)
+            ontology_success = update_ontology_definition(
+                workspace_id, ontology["id"], lakehouse_id
+            )
+            status = "SUCCESS" if ontology_success else "FAILED"
+            log_message(f"  {status}: {FABRIC_ONTOLOGY_NAME} ({ontology['id']})")
+        elif CREATE_ONTOLOGY:
+            ontology_success = False
+            log_message("  FAILED: Skipped ontology setup because table loading failed.")
+
         log_message("=" * 60)
 
-        if all(results.values()):
-            log_message("\nAll tables loaded successfully!")
+        if table_success and ontology_success:
+            log_message("\nAll tables and ontology setup completed successfully!")
+            if ontology:
+                log_message(f"Ontology: {FABRIC_ONTOLOGY_NAME} ({ontology['id']})")
             return True
         else:
-            log_message("\nWARNING: Some tables failed to load.")
+            log_message("\nWARNING: Some tables or ontology setup failed.")
             return False
 
     except Exception as e:

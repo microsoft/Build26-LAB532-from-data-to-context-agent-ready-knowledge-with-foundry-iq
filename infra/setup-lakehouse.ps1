@@ -14,15 +14,24 @@
     The Fabric capacity resource ID (from Bicep output). Used to auto-create a workspace.
 .PARAMETER LakehouseName
     Name for the lakehouse (default: zava-diy-lakehouse).
+.PARAMETER OntologyName
+    Name for the Fabric IQ ontology (default: ZavaDIYOntology).
 .PARAMETER IncludeEmbeddings
     If specified, includes vector embedding columns in the products table.
+.PARAMETER SkipOntology
+    If specified, skips Fabric IQ ontology creation.
+.PARAMETER TenantId
+    Microsoft Entra tenant ID to use for Fabric and OneLake authentication.
 #>
 param(
     [string]$WorkspaceId = "",
     [string]$CapacityId = "",
     [string]$LakehouseName = "ZavaDIYLakehouse",
     [string]$WorkspaceName = "ZavaDIYWorkspace",
-    [switch]$IncludeEmbeddings
+    [string]$OntologyName = "ZavaDIYOntology",
+    [string]$TenantId = "72f988bf-86f1-41af-91ab-2d7cd011db47",
+    [switch]$IncludeEmbeddings,
+    [switch]$SkipOntology
 )
 
 $ErrorActionPreference = "Stop"
@@ -45,6 +54,9 @@ FABRIC_WORKSPACE_ID=$WorkspaceId
 FABRIC_CAPACITY_ID=$CapacityId
 FABRIC_WORKSPACE_NAME=$WorkspaceName
 LAKEHOUSE_NAME=$LakehouseName
+FABRIC_ONTOLOGY_NAME=$OntologyName
+FABRIC_TENANT_ID=$TenantId
+CREATE_ONTOLOGY=$(if ($SkipOntology) { "false" } else { "true" })
 INCLUDE_EMBEDDINGS=$(if ($IncludeEmbeddings) { "true" } else { "false" })
 "@
 
@@ -72,22 +84,13 @@ if (-not (Test-Path $venvPy)) {
 }
 if (-not (Test-Path $venvPy)) { throw "Venv python not found at $venvPy" }
 
-<<<<<<< HEAD
 # Install dependencies (reuse notebooks/requirements.txt which has all needed packages)
 $repoParent = Split-Path $repoRoot -Parent
-$reqFile = Join-Path $repoParent "notebooks" "requirements.txt"
+$reqFile = Join-Path (Join-Path $repoParent "notebooks") "requirements.txt"
 if (-not (Test-Path $reqFile)) {
     $reqFile = Join-Path $repoRoot "requirements.txt"
 }
 if (-not (Test-Path $reqFile)) { throw "No requirements file found" }
-=======
-# Install dependencies
-$reqFile = Join-Path $repoRoot "requirements-lakehouse.txt"
-if (-not (Test-Path $reqFile)) {
-    $reqFile = Join-Path $repoRoot "requirements.txt"
-}
-if (-not (Test-Path $reqFile)) { throw "requirements file not found" }
->>>>>>> 8d770ffb375bc971c36971066e11062039d5333d
 
 Write-Host "Installing Python dependencies..."
 & $venvPy -m pip install --upgrade pip --quiet 2>$null
@@ -107,7 +110,7 @@ Pop-Location
 
 if ($exitCode -eq 0) {
     Write-Host ""
-    Write-Host "Lakehouse setup completed successfully!"
+    Write-Host "Lakehouse and ontology setup completed successfully!"
 } else {
     Write-Host ""
     Write-Host "ERROR: Lakehouse setup failed. Check create-lakehouse.log for details."

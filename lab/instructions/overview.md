@@ -25,7 +25,7 @@ If you need to sign in to any Azure or Microsoft 365 apps, use the following cre
 
 In this hands-on lab, you'll build an Azure AI Search knowledge base using agentic retrieval and extend it with Model Context Protocol (MCP) knowledge sources. You'll connect the knowledge base to both indexed enterprise content and live MCP servers, enabling grounded, citation-backed answers across multiple systems.
 
-Through 5 progressive notebook exercises, you'll build a standard document-backed knowledge base, extend it with Fabric IQ and Work IQ, add web grounding, and finish by connecting arbitrary MCP servers. By the end, you'll have a flexible agentic knowledge base that blends multiple source types.
+Through 5 progressive notebook exercises, you'll build a multi-source document-backed knowledge base, extend it with MAI Grounding through MCP, add Fabric IQ and Work IQ, and finish by combining Work IQ and Fabric IQ in one KB. By the end, you'll have flexible agentic knowledge bases that blend multiple source types.
 
 ## Getting started
 
@@ -61,7 +61,7 @@ All required Azure services including **Azure AI Search with pre-indexed data** 
 - **Azure AI Search** - Standard tier with two pre-created indexes:
   - **hrdocs:** HR policies, employee handbook, role library, company overview
   - **healthdocs:** Health insurance plans, benefits options, coverage details
-- **Azure OpenAI** - Deployed models **gpt-4.1** for chat completion and answer synthesis and **text-embedding-3-large** for vector embeddings
+- **Azure OpenAI** - Deployed models **gpt-5.4-mini** for chat completion and answer synthesis and **text-embedding-3-large** for vector embeddings
 - **Pre-computed vectors** - All 384 document chunks are already vectorized and indexed
 
 </details>
@@ -153,9 +153,9 @@ If you encounter errors related to the GPT model when running notebook cells:
 1. Navigate to +++https://portal.azure.com+++ > Select your OpenAI service.
 2. Select **Go to Microsoft Foundry**.
 3. Select **Deployments**.
-4. Verify that **gpt-4.1** is deployed.
+4. Verify that **gpt-5.4-mini** is deployed.
 5. If missing, click **Create new deployment**:
-   - Select **gpt-4.1** model
+   - Select **gpt-5.4-mini** model
    - Set **Standard** deployment type
    - Make sure your existing OpenAI resource is selected
    - Click **Deploy**
@@ -166,11 +166,11 @@ If you encounter errors related to the GPT model when running notebook cells:
 
 This lab includes 5 progressive notebooks covering the refreshed knowledge-base plan:
 
-1. **Standard KB with documents** — Build a knowledge base over file and indexed blob sources
-2. **Fabric IQ source** — Add Fabric IQ as a first-class knowledge source
-3. **Work IQ source** — Bring Work IQ into the KB through the best available path
-4. **Web source grounding** — Add a web source and compare grounding behavior
-5. **Arbitrary MCP servers** — Connect live servers such as Microsoft Learn and GitHub
+1. **Multi-source search indexes** — Build a knowledge base over the restored HR and health indexes
+2. **MAI Grounding MCP** — Add MAI Grounding through an MCP knowledge source
+3. **Fabric IQ source** — Add Fabric IQ through a Fabric Ontology knowledge source
+4. **Work IQ source** — Bring Work IQ into the KB as a first-party source
+5. **Work IQ + Fabric IQ** — Combine workplace and structured Fabric data in one KB
 
 Start with **part1-standard-foundry-iq-kb.ipynb** in the **notebooks/** folder and progress through each notebook sequentially.
 
