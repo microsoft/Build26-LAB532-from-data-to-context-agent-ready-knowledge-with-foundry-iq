@@ -90,7 +90,7 @@ Confirm that the search indexes have been created successfully:
 2. Sign in using your lab credentials:
     - **Username**: +++@lab.CloudPortalCredential(User1).Username+++  
     - **Temporary Access Pass**: +++@lab.CloudPortalCredential(User1).AccessToken+++
-3. In the Azure Portal search bar at the top, search for +++lab006-search+++ and select your AI Search service (it will look like *lab006-search-.....*).
+3. In the Azure Portal search bar at the top, search for +++lab532-search+++ and select your AI Search service (it will look like *lab532-search-.....*).
 4. In the left navigation menu, select **Search management** > **Indexes**.
 5. You should see two indexes:
    - **hrdocs** - Should show document count of 50
@@ -110,17 +110,17 @@ If the automated environment setup fails, follow these steps to configure your e
 3. Gather the required credentials from Azure Portal:
 
    **For Azure AI Search:**
-   - Navigate to **Azure Portal** > Search for +++lab006-search+++ > Select your AI Search service
+   - Navigate to **Azure Portal** > Search for +++lab532-search+++ > Select your AI Search service
    - Go to **Settings** > **Keys**
    - Copy the **URL** (endpoint) and **Primary admin key**
 
    **For Azure OpenAI:**
-   - Navigate to **Azure Portal** > Search for +++lab006-openai+++ > Select your OpenAI service
+   - Navigate to **Azure Portal** > Search for +++lab532-openai+++ > Select your OpenAI service
    - Go to **Keys and Endpoint**
    - Copy the **Endpoint** and **KEY 1**
 
    **For Azure Storage:**
-   - Navigate to **Azure Portal** > Search for +++lab006st+++ > Select your Storage Account (it will look like *lab006st...*)
+   - Navigate to **Azure Portal** > Search for +++lab532st+++ > Select your Storage Account (it will look like *lab532st...*)
    - Go to **Security + networking** > **Access keys**
    - Copy the **Connection string** from key1
 
