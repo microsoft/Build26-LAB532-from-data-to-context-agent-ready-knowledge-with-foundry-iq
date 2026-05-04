@@ -29,7 +29,7 @@ param(
     [string]$LakehouseName = "ZavaDIYLakehouse",
     [string]$WorkspaceName = "ZavaDIYWorkspace",
     [string]$OntologyName = "ZavaDIYOntology",
-    [string]$TenantId = "72f988bf-86f1-41af-91ab-2d7cd011db47",
+    [string]$TenantId = "",
     [switch]$IncludeEmbeddings,
     [switch]$SkipOntology
 )
