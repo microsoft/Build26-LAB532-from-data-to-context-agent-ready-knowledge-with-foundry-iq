@@ -43,7 +43,7 @@ function Get-GraphToken {
     return $response.access_token
 }
 
-# Create a message directly in the user's mailbox folder
+# Create a message directly in the user's Inbox folder
 function Create-MailMessage {
     param(
         [string]$Token,
@@ -54,7 +54,7 @@ function Create-MailMessage {
         Authorization  = "Bearer $Token"
         "Content-Type" = "application/json"
     }
-    $url = "https://graph.microsoft.com/v1.0/users/$UserId/messages"
+    $url = "https://graph.microsoft.com/v1.0/users/$UserId/mailFolders/inbox/messages"
     $body = $Message | ConvertTo-Json -Depth 10
     $result = Invoke-RestMethod -Method POST -Uri $url -Headers $headers -Body $body
     return $result
@@ -83,7 +83,7 @@ function Move-ToInbox {
 $emails = @(
     @{
         subject          = "Urgent: Professional Claw Hammer out of stock at Seattle store"
-        from             = @{
+        sender           = @{
             emailAddress = @{
                 name    = "Marcus Chen"
                 address = "marcus.chen@zavadiy.com"
@@ -113,7 +113,7 @@ $emails = @(
     },
     @{
         subject          = "RE: Weekly inventory report - Seattle flagged"
-        from             = @{
+        sender           = @{
             emailAddress = @{
                 name    = "Priya Sharma"
                 address = "priya.sharma@zavadiy.com"
@@ -144,7 +144,7 @@ $emails = @(
     },
     @{
         subject          = "Customer escalation - hammer unavailable again"
-        from             = @{
+        sender           = @{
             emailAddress = @{
                 name    = "Jordan Lee"
                 address = "jordan.lee@zavadiy.com"
@@ -184,7 +184,6 @@ Log "Acquired Graph API token"
 
 foreach ($email in $emails) {
     $msg = Create-MailMessage -Token $token -UserId $UserUpn -Message $email
-    Move-ToInbox -Token $token -UserId $UserUpn -MessageId $msg.id
     Log "Created: $($email.subject)"
 }
 
