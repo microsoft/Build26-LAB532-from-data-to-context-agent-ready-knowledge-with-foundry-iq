@@ -30,6 +30,8 @@ param(
     [string]$WorkspaceName = "ZavaDIYWorkspace",
     [string]$OntologyName = "ZavaDIYOntology",
     [string]$TenantId = "",
+    [string]$ClientId = "",
+    [string]$ClientSecret = "",
     [switch]$IncludeEmbeddings,
     [switch]$SkipOntology
 )
@@ -102,6 +104,11 @@ if (-not (Test-Path $createScript)) { throw "create-lakehouse.py not found at $c
 
 Write-Host "Running create-lakehouse.py..."
 Write-Host ""
+
+# Set env vars for DefaultAzureCredential (EnvironmentCredential)
+if ($ClientId) { [Environment]::SetEnvironmentVariable("AZURE_CLIENT_ID", $ClientId, "Process") }
+if ($ClientSecret) { [Environment]::SetEnvironmentVariable("AZURE_CLIENT_SECRET", $ClientSecret, "Process") }
+if ($TenantId) { [Environment]::SetEnvironmentVariable("AZURE_TENANT_ID", $TenantId, "Process") }
 
 Push-Location $repoRoot
 & $venvPy $createScript
