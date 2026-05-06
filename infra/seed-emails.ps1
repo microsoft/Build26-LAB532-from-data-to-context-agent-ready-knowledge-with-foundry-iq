@@ -57,7 +57,7 @@ function Create-MailMessage {
     $url = "https://graph.microsoft.com/v1.0/users/$UserId/mailFolders/inbox/messages"
     $body = $Message | ConvertTo-Json -Depth 10
     Log "POST $url"
-    Log "Body: $body"
+    Log "Body length: $($body.Length) chars"
     try {
         $result = Invoke-RestMethod -Method POST -Uri $url -Headers $headers -Body ([System.Text.Encoding]::UTF8.GetBytes($body))
         return $result
@@ -68,8 +68,8 @@ function Create-MailMessage {
             $errBody = $reader.ReadToEnd()
             $reader.Close()
         }
-        Log "ERROR response: $errBody"
-        throw
+        Log "ERROR ($($_.Exception.Response.StatusCode)): $errBody"
+        return $null
     }
 }
 
@@ -150,11 +150,25 @@ $emails = @(
 Log "Seeding $($emails.Count) emails into mailbox: $UserUpn"
 
 $token = Get-GraphToken
-Log "Acquired Graph API token"
+Log "Acquired Graph API token (length: $($token.Length))"
+
+# Quick permission check - try to read mailbox settings
+try {
+    $checkUrl = "https://graph.microsoft.com/v1.0/users/$UserUpn/mailboxSettings"
+    $checkHeaders = @{ Authorization = "Bearer $token" }
+    $null = Invoke-RestMethod -Method GET -Uri $checkUrl -Headers $checkHeaders
+    Log "Mailbox access confirmed"
+} catch {
+    Log "WARNING: Cannot access mailbox - SP may lack Mail.ReadWrite permission. Status: $($_.Exception.Response.StatusCode)"
+}
 
 foreach ($email in $emails) {
     $msg = Create-MailMessage -Token $token -UserId $UserUpn -Message $email
-    Log "Created: $($email.subject)"
+    if ($msg) {
+        Log "Created: $($email.subject)"
+    } else {
+        Log "FAILED: $($email.subject)"
+    }
 }
 
 Log "Email seeding complete!"
