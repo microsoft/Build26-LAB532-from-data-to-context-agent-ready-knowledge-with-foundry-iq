@@ -60,22 +60,6 @@ function Create-MailMessage {
     return $result
 }
 
-# Move a message to Inbox
-function Move-ToInbox {
-    param(
-        [string]$Token,
-        [string]$UserId,
-        [string]$MessageId
-    )
-    $headers = @{
-        Authorization  = "Bearer $Token"
-        "Content-Type" = "application/json"
-    }
-    $url = "https://graph.microsoft.com/v1.0/users/$UserId/messages/$MessageId/move"
-    $body = @{ destinationId = "inbox" } | ConvertTo-Json
-    Invoke-RestMethod -Method POST -Uri $url -Headers $headers -Body $body | Out-Null
-}
-
 # ============================================================
 # Email definitions
 # ============================================================
@@ -83,10 +67,10 @@ function Move-ToInbox {
 $emails = @(
     @{
         subject          = "Urgent: Professional Claw Hammer out of stock at Seattle store"
-        sender           = @{
+        from             = @{
             emailAddress = @{
                 name    = "Marcus Chen"
-                address = "marcus.chen@zavadiy.com"
+                address = $UserUpn
             }
         }
         toRecipients     = @(
@@ -107,16 +91,15 @@ $emails = @(
 <p>Thanks,<br/>Marcus Chen<br/>Regional Operations Manager</p>
 "@
         }
-        receivedDateTime = (Get-Date).AddHours(-4).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
         isRead           = $false
         importance       = "high"
     },
     @{
         subject          = "RE: Weekly inventory report - Seattle flagged"
-        sender           = @{
+        from             = @{
             emailAddress = @{
                 name    = "Priya Sharma"
-                address = "priya.sharma@zavadiy.com"
+                address = $UserUpn
             }
         }
         toRecipients     = @(
@@ -138,16 +121,15 @@ $emails = @(
 <p>Thanks,<br/>Priya Sharma<br/>Inventory Analyst</p>
 "@
         }
-        receivedDateTime = (Get-Date).AddHours(-2).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
         isRead           = $false
         importance       = "normal"
     },
     @{
         subject          = "Customer escalation - hammer unavailable again"
-        sender           = @{
+        from             = @{
             emailAddress = @{
                 name    = "Jordan Lee"
-                address = "jordan.lee@zavadiy.com"
+                address = $UserUpn
             }
         }
         toRecipients     = @(
@@ -167,7 +149,6 @@ $emails = @(
 <p>Thanks,<br/>Jordan Lee<br/>Customer Support Lead</p>
 "@
         }
-        receivedDateTime = (Get-Date).AddHours(-1).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
         isRead           = $false
         importance       = "high"
     }
