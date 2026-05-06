@@ -55,19 +55,24 @@ function Send-MailMessage {
     }
     $url = "https://graph.microsoft.com/v1.0/users/$UserId/sendMail"
     $payload = @{ message = $Mail; saveToSentItems = $false } | ConvertTo-Json -Depth 10
-    try {
-        Invoke-RestMethod -Method POST -Uri $url -Headers $headers -Body ([System.Text.Encoding]::UTF8.GetBytes($payload))
-        return $true
-    } catch {
-        $errBody = ""
-        if ($_.Exception.Response) {
-            $reader = New-Object System.IO.StreamReader($_.Exception.Response.GetResponseStream())
-            $errBody = $reader.ReadToEnd()
-            $reader.Close()
+    for ($attempt = 1; $attempt -le 3; $attempt++) {
+        try {
+            Invoke-RestMethod -Method POST -Uri $url -Headers $headers -Body ([System.Text.Encoding]::UTF8.GetBytes($payload)) -TimeoutSec 60
+            return $true
+        } catch {
+            $errBody = ""
+            if ($_.Exception.Response) {
+                $reader = New-Object System.IO.StreamReader($_.Exception.Response.GetResponseStream())
+                $errBody = $reader.ReadToEnd()
+                $reader.Close()
+            }
+            Log "ERROR attempt $attempt ($($_.Exception.Response.StatusCode)): $errBody"
+            if ($attempt -lt 3) {
+                Start-Sleep -Seconds 5
+            }
         }
-        Log "ERROR ($($_.Exception.Response.StatusCode)): $errBody"
-        return $false
     }
+    return $false
 }
 
 # ============================================================
