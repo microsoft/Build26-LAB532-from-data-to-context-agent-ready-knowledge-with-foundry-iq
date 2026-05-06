@@ -118,6 +118,12 @@ if ($fabricCapacityId) {
           -TenantId $tenantId `
           -ClientId $clientId `
           -ClientSecret $clientSecret 2>&1 | Tee-Object -FilePath $logFile -Append
+        # Append the Python-level log for debugging
+        $fabricLog = Join-Path $localInfraPath "create-lakehouse.log"
+        if (Test-Path $fabricLog) {
+            Log "--- Fabric Python log ---"
+            Get-Content $fabricLog | Add-Content -Path $logFile
+        }
         Log "Fabric Lakehouse setup complete"
     } else {
         Log "WARNING: setup-lakehouse.ps1 not found, skipping lakehouse"
