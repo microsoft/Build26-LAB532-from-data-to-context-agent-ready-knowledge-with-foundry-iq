@@ -57,6 +57,7 @@ FABRIC_TENANT_ID = os.getenv("FABRIC_TENANT_ID") or os.getenv("AZURE_TENANT_ID",
 FABRIC_ONTOLOGY_ID = os.getenv("FABRIC_ONTOLOGY_ID", "")
 FABRIC_ONTOLOGY_NAME = os.getenv("FABRIC_ONTOLOGY_NAME", "ZavaDIYOntology")
 FABRIC_LAB_USER_UPN = os.getenv("FABRIC_LAB_USER_UPN", "")
+FABRIC_LAB_USER_OID = os.getenv("FABRIC_LAB_USER_OID", "")
 CREATE_ONTOLOGY = os.getenv("CREATE_ONTOLOGY", "true").lower() == "true"
 INCLUDE_EMBEDDINGS = os.getenv("INCLUDE_EMBEDDINGS", "false").lower() == "true"
 _CREDENTIAL = None
@@ -171,17 +172,17 @@ def get_existing_workspace(name: str) -> dict:
     sys.exit(1)
 
 
-def add_workspace_member(workspace_id: str, user_email: str, role: str = "Admin"):
+def add_workspace_member(workspace_id: str, user_oid: str, user_email: str, role: str = "Admin"):
     """Add a user to the workspace with the given role (Admin, Member, Contributor, Viewer)."""
     url = f"{FABRIC_API_BASE}/workspaces/{workspace_id}/roleAssignments"
     payload = {
         "principal": {
-            "id": user_email,
+            "id": user_oid,
             "type": "User",
         },
         "role": role,
     }
-    log_message(f"Adding '{user_email}' as {role} to workspace {workspace_id[:12]}...")
+    log_message(f"Adding '{user_email}' (OID: {user_oid}) as {role} to workspace {workspace_id[:12]}...")
     resp = requests.post(url, headers=fabric_headers(), json=payload)
     if resp.status_code in (200, 201):
         log_message(f"User added as {role} successfully.")
@@ -713,8 +714,10 @@ def main():
     log_message(f"Include Embeddings: {INCLUDE_EMBEDDINGS}")
 
     # Add lab user as Admin so they can see and use the workspace
-    if FABRIC_LAB_USER_UPN:
-        add_workspace_member(workspace_id, FABRIC_LAB_USER_UPN, "Admin")
+    if FABRIC_LAB_USER_OID:
+        add_workspace_member(workspace_id, FABRIC_LAB_USER_OID, FABRIC_LAB_USER_UPN, "Admin")
+    elif FABRIC_LAB_USER_UPN:
+        log_message(f"WARNING: No object ID for lab user, cannot add to workspace")
 
     try:
         total_steps = 6 if CREATE_ONTOLOGY else 5

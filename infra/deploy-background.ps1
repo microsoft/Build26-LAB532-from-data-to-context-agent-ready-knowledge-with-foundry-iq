@@ -118,7 +118,8 @@ if ($fabricCapacityId) {
           -TenantId $tenantId `
           -ClientId $clientId `
           -ClientSecret $clientSecret `
-          -LabUserUpn $labUserUpn 2>&1 | Tee-Object -FilePath $logFile -Append
+          -LabUserUpn $labUserUpn `
+          -LabUserObjectId $labUserObjectId 2>&1 | Tee-Object -FilePath $logFile -Append
         # Append the Python-level log for debugging
         $fabricLog = Join-Path $localInfraPath "create-lakehouse.log"
         if (Test-Path $fabricLog) {
