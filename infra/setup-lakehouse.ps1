@@ -32,6 +32,7 @@ param(
     [string]$TenantId = "",
     [string]$ClientId = "",
     [string]$ClientSecret = "",
+    [string]$LabUserUpn = "",
     [switch]$IncludeEmbeddings,
     [switch]$SkipOntology
 )
@@ -58,6 +59,7 @@ FABRIC_WORKSPACE_NAME=$WorkspaceName
 LAKEHOUSE_NAME=$LakehouseName
 FABRIC_ONTOLOGY_NAME=$OntologyName
 FABRIC_TENANT_ID=$TenantId
+FABRIC_LAB_USER_UPN=$LabUserUpn
 CREATE_ONTOLOGY=$(if ($SkipOntology) { "false" } else { "true" })
 INCLUDE_EMBEDDINGS=$(if ($IncludeEmbeddings) { "true" } else { "false" })
 "@
