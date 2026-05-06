@@ -52,12 +52,25 @@ function Create-MailMessage {
     )
     $headers = @{
         Authorization  = "Bearer $Token"
-        "Content-Type" = "application/json"
+        "Content-Type" = "application/json; charset=utf-8"
     }
     $url = "https://graph.microsoft.com/v1.0/users/$UserId/mailFolders/inbox/messages"
     $body = $Message | ConvertTo-Json -Depth 10
-    $result = Invoke-RestMethod -Method POST -Uri $url -Headers $headers -Body $body
-    return $result
+    Log "POST $url"
+    Log "Body length: $($body.Length) chars"
+    try {
+        $result = Invoke-RestMethod -Method POST -Uri $url -Headers $headers -Body ([System.Text.Encoding]::UTF8.GetBytes($body))
+        return $result
+    } catch {
+        $errBody = ""
+        if ($_.Exception.Response) {
+            $reader = New-Object System.IO.StreamReader($_.Exception.Response.GetResponseStream())
+            $errBody = $reader.ReadToEnd()
+            $reader.Close()
+        }
+        Log "ERROR ($($_.Exception.Response.StatusCode)): $errBody"
+        return $null
+    }
 }
 
 # ============================================================
@@ -67,12 +80,6 @@ function Create-MailMessage {
 $emails = @(
     @{
         subject          = "Urgent: Professional Claw Hammer out of stock at Seattle store"
-        from             = @{
-            emailAddress = @{
-                name    = "Marcus Chen"
-                address = $UserUpn
-            }
-        }
         toRecipients     = @(
             @{
                 emailAddress = @{
@@ -91,17 +98,9 @@ $emails = @(
 <p>Thanks,<br/>Marcus Chen<br/>Regional Operations Manager</p>
 "@
         }
-        isRead           = $false
-        importance       = "high"
     },
     @{
         subject          = "RE: Weekly inventory report - Seattle flagged"
-        from             = @{
-            emailAddress = @{
-                name    = "Priya Sharma"
-                address = $UserUpn
-            }
-        }
         toRecipients     = @(
             @{
                 emailAddress = @{
@@ -121,17 +120,9 @@ $emails = @(
 <p>Thanks,<br/>Priya Sharma<br/>Inventory Analyst</p>
 "@
         }
-        isRead           = $false
-        importance       = "normal"
     },
     @{
         subject          = "Customer escalation - hammer unavailable again"
-        from             = @{
-            emailAddress = @{
-                name    = "Jordan Lee"
-                address = $UserUpn
-            }
-        }
         toRecipients     = @(
             @{
                 emailAddress = @{
@@ -149,8 +140,6 @@ $emails = @(
 <p>Thanks,<br/>Jordan Lee<br/>Customer Support Lead</p>
 "@
         }
-        isRead           = $false
-        importance       = "high"
     }
 )
 
@@ -161,11 +150,25 @@ $emails = @(
 Log "Seeding $($emails.Count) emails into mailbox: $UserUpn"
 
 $token = Get-GraphToken
-Log "Acquired Graph API token"
+Log "Acquired Graph API token (length: $($token.Length))"
+
+# Quick permission check - try to read mailbox settings
+try {
+    $checkUrl = "https://graph.microsoft.com/v1.0/users/$UserUpn/mailboxSettings"
+    $checkHeaders = @{ Authorization = "Bearer $token" }
+    $null = Invoke-RestMethod -Method GET -Uri $checkUrl -Headers $checkHeaders
+    Log "Mailbox access confirmed"
+} catch {
+    Log "WARNING: Cannot access mailbox - SP may lack Mail.ReadWrite permission. Status: $($_.Exception.Response.StatusCode)"
+}
 
 foreach ($email in $emails) {
     $msg = Create-MailMessage -Token $token -UserId $UserUpn -Message $email
-    Log "Created: $($email.subject)"
+    if ($msg) {
+        Log "Created: $($email.subject)"
+    } else {
+        Log "FAILED: $($email.subject)"
+    }
 }
 
 Log "Email seeding complete!"

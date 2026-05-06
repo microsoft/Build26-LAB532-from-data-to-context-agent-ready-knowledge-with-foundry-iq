@@ -32,7 +32,7 @@ import uuid
 from datetime import datetime
 
 import requests
-from azure.identity import AzureCliCredential, DefaultAzureCredential
+from azure.identity import DefaultAzureCredential
 from azure.storage.filedatalake import DataLakeServiceClient
 from dotenv import load_dotenv
 
@@ -78,10 +78,10 @@ def get_credential():
     """Get the credential used for Fabric API and OneLake calls."""
     global _CREDENTIAL
     if _CREDENTIAL is None:
-        if FABRIC_TENANT_ID:
-            _CREDENTIAL = AzureCliCredential(tenant_id=FABRIC_TENANT_ID)
-        else:
-            _CREDENTIAL = DefaultAzureCredential()
+        # Always use DefaultAzureCredential — it picks up AZURE_CLIENT_ID,
+        # AZURE_CLIENT_SECRET, AZURE_TENANT_ID env vars (EnvironmentCredential)
+        # which work in headless/subprocess environments like Skillable VMs.
+        _CREDENTIAL = DefaultAzureCredential()
     return _CREDENTIAL
 
 
