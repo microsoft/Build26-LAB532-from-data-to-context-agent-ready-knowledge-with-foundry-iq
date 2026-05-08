@@ -9,6 +9,9 @@ param principalId string
 @description('User email/UPN for Fabric capacity administration')
 param fabricAdminUpn string = ''
 
+@description('Service principal object ID for Fabric capacity admin access')
+param spPrincipalId string = ''
+
 @description('The name prefix for all resources')
 param resourcePrefix string = 'lab532'
 
@@ -347,8 +350,11 @@ resource fabricCapacity 'Microsoft.Fabric/capacities@2023-11-01' = {
   }
   properties: {
     administration: {
-      members: [
+      members: empty(spPrincipalId) ? [
         empty(fabricAdminUpn) ? principalId : fabricAdminUpn
+      ] : [
+        empty(fabricAdminUpn) ? principalId : fabricAdminUpn
+        spPrincipalId
       ]
     }
   }

@@ -23,6 +23,10 @@ $tenantId = $env:BG_TENANT_ID
 az config set core.only_show_errors=yes --only-show-errors
 az config set bicep.use_binary_from_path=false --only-show-errors
 
+# Resolve SP object ID so Bicep can add it as a Fabric capacity admin
+$spObjectId = az ad sp show --id $clientId --query id -o tsv
+Log "SP Object ID: $spObjectId"
+
 $deploymentName = "deployment"
 
 Log "Starting Bicep deployment..."
@@ -32,6 +36,7 @@ $deploymentOutput = az deployment group create `
   --template-file $bicepFilePath `
   --parameters principalId="$labUserObjectId" `
   --parameters fabricAdminUpn="$labUserUpn" `
+  --parameters spPrincipalId="$spObjectId" `
   --parameters location="eastus2" `
   --query properties.outputs -o json 2>&1
 $deployExitCode = $LASTEXITCODE
