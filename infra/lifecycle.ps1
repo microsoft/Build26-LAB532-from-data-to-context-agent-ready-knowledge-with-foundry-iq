@@ -46,6 +46,7 @@ $subscriptionId = $env:BG_SUBSCRIPTION_ID
 $resourceGroupName = $env:BG_RESOURCE_GROUP
 $labUserObjectId = $env:BG_LAB_USER_OID
 $bicepFilePath = $env:BG_BICEP_PATH
+$tenantId = $env:BG_TENANT_ID
 
 # Reuse the az CLI session from the foreground script (token cache in ~/.azure/)
 az config set core.only_show_errors=yes --only-show-errors
@@ -132,6 +133,7 @@ powershell -ExecutionPolicy Bypass -File $setupLocal `
   -SearchAdminKey $searchAdminKey `
   -OpenAIEndpoint $openaiEndpoint `
   -OpenAIKey $openaiKey `
+  -TenantId $tenantId `
   -ProjectEndpoint $projectEndpoint `
   -ProjectResourceId $projectResourceId 2>&1 | Tee-Object -FilePath $logFile -Append
 
@@ -194,6 +196,7 @@ $env:BG_SUBSCRIPTION_ID = $subscriptionId
 $env:BG_RESOURCE_GROUP = $resourceGroupName
 $env:BG_LAB_USER_OID = $labUserObjectId
 $env:BG_BICEP_PATH = $bicepFilePath
+$env:BG_TENANT_ID = $tenantId
 
 Log "Launching background deploy process..."
 Start-Process -FilePath "powershell.exe" `

@@ -110,6 +110,7 @@ powershell -ExecutionPolicy Bypass -File $setupLocal `
   -SearchAdminKey $searchAdminKey `
   -OpenAIEndpoint $openaiEndpoint `
   -OpenAIKey $openaiKey `
+  -TenantId $tenantId `
   -ProjectEndpoint $projectEndpoint `
   -ProjectResourceId $projectResourceId 2>&1 | Tee-Object -FilePath $logFile -Append
 
