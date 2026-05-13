@@ -3,6 +3,7 @@ param(
   [Parameter(Mandatory=$true)][string]$SearchAdminKey,
   [Parameter(Mandatory=$true)][string]$OpenAIEndpoint,
   [Parameter(Mandatory=$true)][string]$OpenAIKey,
+  [string]$TenantId = "",
   [string]$ProjectEndpoint = "",
   [string]$ProjectResourceId = "",
   [string]$ProjectConnectionName = "kb-mcp-connection"
@@ -22,6 +23,7 @@ AZURE_OPENAI_ENDPOINT=$OpenAIEndpoint
 AZURE_OPENAI_KEY=$OpenAIKey
 AZURE_OPENAI_CHATGPT_DEPLOYMENT=gpt-4.1
 AZURE_OPENAI_CHATGPT_MODEL_NAME=gpt-4.1
+AZURE_TENANT_ID=$TenantId
 PROJECT_ENDPOINT=$ProjectEndpoint
 PROJECT_RESOURCE_ID=$ProjectResourceId
 PROJECT_CONNECTION_NAME=$ProjectConnectionName
