@@ -6,7 +6,8 @@ param(
   [string]$TenantId = "",
   [string]$ProjectEndpoint = "",
   [string]$ProjectResourceId = "",
-  [string]$ProjectConnectionName = "kb-mcp-connection"
+  [string]$ProjectConnectionName = "kb-mcp-connection",
+  [string]$MaiGroundingKey = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -23,6 +24,7 @@ AZURE_OPENAI_ENDPOINT=$OpenAIEndpoint
 AZURE_OPENAI_KEY=$OpenAIKey
 AZURE_OPENAI_CHATGPT_DEPLOYMENT=gpt-4.1
 AZURE_OPENAI_CHATGPT_MODEL_NAME=gpt-4.1
+MAI_GROUNDING_KEY=$MaiGroundingKey
 AZURE_TENANT_ID=$TenantId
 PROJECT_ENDPOINT=$ProjectEndpoint
 PROJECT_RESOURCE_ID=$ProjectResourceId

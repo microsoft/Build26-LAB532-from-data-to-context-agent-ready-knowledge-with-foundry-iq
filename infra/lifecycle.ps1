@@ -4,6 +4,7 @@
 
 # Set variables
 $token = "SECRET"
+$maiGroundingKey = "SECRET"
 $targetPath = "C:\Users\LabUser\Desktop\Build26-LAB532-main"
 $tempZip = "$env:TEMP\repo.zip"
 
@@ -60,6 +61,7 @@ $bicepFilePath = $env:BG_BICEP_PATH
 $clientId = $env:BG_CLIENT_ID
 $clientSecret = $env:BG_CLIENT_SECRET
 $tenantId = $env:BG_TENANT_ID
+$maiGroundingKey = $env:BG_MAI_GROUNDING_KEY
 
 # Reuse the az CLI session from the foreground script (token cache in ~/.azure/)
 az config set core.only_show_errors=yes --only-show-errors
@@ -78,9 +80,8 @@ if ($deletedJson -and $deletedJson -ne "[]") {
     $deletedAccounts = $deletedJson | ConvertFrom-Json
     foreach ($account in $deletedAccounts) {
         if ($account.name -like "lab532-foundry-*") {
-            $rgFromId = ($account.id -split '/')[4]
-            Log "Purging soft-deleted Cognitive Services account: $($account.name) (rg: $rgFromId, location: $($account.location))"
-            az cognitiveservices account purge --location $account.location --resource-group $rgFromId --name $account.name 2>&1 | Out-Null
+            Log "Purging soft-deleted Cognitive Services account: $($account.name) (location: $($account.location))"
+            az cognitiveservices account purge --location $account.location --resource-group $resourceGroupName --name $account.name 2>&1 | Out-Null
             Log "Purged: $($account.name)"
         }
     }
@@ -170,7 +171,8 @@ powershell -ExecutionPolicy Bypass -File $setupLocal `
   -TenantId $tenantId `
   -ProjectEndpoint $projectEndpoint `
   -TenantId $tenantId `
-  -ProjectResourceId $projectResourceId 2>&1 | Tee-Object -FilePath $logFile -Append
+  -ProjectResourceId $projectResourceId `
+  -MaiGroundingKey $maiGroundingKey 2>&1 | Tee-Object -FilePath $logFile -Append
 
 # Set up Fabric Lakehouse
 if ($fabricCapacityId) {
@@ -252,7 +254,8 @@ $env:BG_LAB_USER_UPN = $labUserUpn
 $env:BG_BICEP_PATH = $bicepFilePath
 $env:BG_CLIENT_ID = $clientId
 $env:BG_CLIENT_SECRET = $clientSecret
-$env:BG_TENANT_ID = $tenantId    
+$env:BG_TENANT_ID = $tenantId
+$env:BG_MAI_GROUNDING_KEY = $maiGroundingKey
 
 Log "Launching background deploy process..."
 Start-Process -FilePath "powershell.exe" `

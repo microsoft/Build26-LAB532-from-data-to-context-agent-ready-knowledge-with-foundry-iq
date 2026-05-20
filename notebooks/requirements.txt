@@ -1,7 +1,9 @@
+--extra-index-url https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/
+
 aiohttp==3.13.3
 azure-ai-projects==2.0.1
 azure-identity==1.25.2
-azure-search-documents==11.7.0b2
+azure-search-documents==12.1.0a20260515004
 azure-storage-blob==12.28.0
 azure-storage-file-datalake==12.23.0
 ipykernel==7.2.0
