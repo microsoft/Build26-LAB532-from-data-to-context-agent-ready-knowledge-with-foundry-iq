@@ -3,24 +3,34 @@
 # ===========================================
 
 # Set variables
-$repoUrl = "https://github.com/microsoft/mvp26-LAB006-build-agentic-knowledge-bases-next-level-rag-with-azure-ai-search"
-$zipUrl = "$repoUrl/archive/refs/heads/main.zip"
-$downloadPath = "$env:USERPROFILE\Downloads\LAB006.zip"
-$extractPath = "$env:USERPROFILE\Desktop"
+$token = "SECRET"
+$targetPath = "C:\Users\LabUser\Desktop\Build26-LAB532-main"
+$tempZip = "$env:TEMP\repo.zip"
 
-# Download the ZIP file from GitHub
-Log "Downloading repo ZIP..."
-Invoke-WebRequest -Uri $zipUrl -OutFile $downloadPath -UseBasicParsing
-
-# Create the target folder if it doesn't exist
-if (!(Test-Path -Path $extractPath)) {
-    New-Item -ItemType Directory -Path $extractPath | Out-Null
+# Download as ZIP using GitHub API
+$headers = @{
+    Authorization = "Bearer $token"
+    Accept = "application/vnd.github+json"
 }
 
-# Extract the zip file to Desktop
-Expand-Archive -Path $downloadPath -DestinationPath $extractPath -Force
+$zipUrl = "https://api.github.com/repos/microsoft/Build26-LAB532/zipball/main"
 
-Log "Repository downloaded and extracted to: $extractPath"
+Invoke-WebRequest -Uri $zipUrl -Headers $headers -OutFile $tempZip -UseBasicParsing
+
+# Extract to temp location
+$tempExtract = "$env:TEMP\extracted"
+if (Test-Path $tempExtract) {
+    Remove-Item $tempExtract -Recurse -Force
+}
+Expand-Archive -Path $tempZip -DestinationPath $tempExtract -Force
+
+# Find the extracted folder and move to final location
+$extractedFolder = Get-ChildItem $tempExtract -Directory | Select-Object -First 1
+
+if (Test-Path $targetPath) {
+    Remove-Item $targetPath -Recurse -Force
+}
+Move-Item $extractedFolder.FullName $targetPath -Force
 
 # Lifecycle — Write a self-contained background script that handles everything
 # after az login: deploy, poll, fetch outputs, run setup.
@@ -45,14 +55,36 @@ Log "=== Background deploy script started ==="
 $subscriptionId = $env:BG_SUBSCRIPTION_ID
 $resourceGroupName = $env:BG_RESOURCE_GROUP
 $labUserObjectId = $env:BG_LAB_USER_OID
+$labUserUpn = $env:BG_LAB_USER_UPN
 $bicepFilePath = $env:BG_BICEP_PATH
+$clientId = $env:BG_CLIENT_ID
+$clientSecret = $env:BG_CLIENT_SECRET
 $tenantId = $env:BG_TENANT_ID
 
 # Reuse the az CLI session from the foreground script (token cache in ~/.azure/)
 az config set core.only_show_errors=yes --only-show-errors
 az config set bicep.use_binary_from_path=false --only-show-errors
 
+# Resolve SP object ID so Bicep can add it as a Fabric capacity admin
+$spObjectId = az ad sp show --id $clientId --query id -o tsv
+Log "SP Object ID: $spObjectId"
+
 $deploymentName = "deployment"
+
+# Purge soft-deleted Cognitive Services accounts to prevent custom subdomain conflicts
+Log "Checking for soft-deleted Cognitive Services accounts..."
+$deletedJson = az cognitiveservices account list-deleted -o json 2>$null
+if ($deletedJson -and $deletedJson -ne "[]") {
+    $deletedAccounts = $deletedJson | ConvertFrom-Json
+    foreach ($account in $deletedAccounts) {
+        if ($account.name -like "lab532-foundry-*") {
+            $rgFromId = ($account.id -split '/')[4]
+            Log "Purging soft-deleted Cognitive Services account: $($account.name) (rg: $rgFromId, location: $($account.location))"
+            az cognitiveservices account purge --location $account.location --resource-group $rgFromId --name $account.name 2>&1 | Out-Null
+            Log "Purged: $($account.name)"
+        }
+    }
+}
 
 Log "Starting Bicep deployment..."
 $deploymentOutput = az deployment group create `
@@ -60,7 +92,9 @@ $deploymentOutput = az deployment group create `
   --resource-group $resourceGroupName `
   --template-file $bicepFilePath `
   --parameters principalId="$labUserObjectId" `
-  --parameters location="eastus2" `
+  --parameters fabricAdminUpn="$labUserUpn" `
+  --parameters spPrincipalId="$spObjectId" `
+  --parameters location="swedencentral" `
   --query properties.outputs -o json 2>&1
 $deployExitCode = $LASTEXITCODE
 
@@ -116,7 +150,7 @@ if ($missingParams.Count -gt 0) {
     exit 1
 }
 
-$localInfraPath = "C:\Users\LabUser\Desktop\mvp26-LAB006-build-agentic-knowledge-bases-next-level-rag-with-azure-ai-search-main\infra"
+$localInfraPath = "C:\Users\LabUser\Desktop\Build26-LAB532-main\infra"
 $setupLocal = Join-Path $localInfraPath "setup-knowledge.ps1"
 
 if (-not (Test-Path $setupLocal)) {
@@ -124,7 +158,7 @@ if (-not (Test-Path $setupLocal)) {
     exit 1
 }
 
-$docsPath = "C:\Users\LabUser\Desktop\mvp26-LAB006-build-agentic-knowledge-bases-next-level-rag-with-azure-ai-search-main\data\ai-search-data"
+$docsPath = "C:\Users\LabUser\Desktop\Build26-LAB532-main\data\ai-search-data"
 [Environment]::SetEnvironmentVariable("LOCAL_DOCS_PATH", $docsPath, "Process")
 
 Log "Running setup-knowledge.ps1..."
@@ -135,6 +169,7 @@ powershell -ExecutionPolicy Bypass -File $setupLocal `
   -OpenAIKey $openaiKey `
   -TenantId $tenantId `
   -ProjectEndpoint $projectEndpoint `
+  -TenantId $tenantId `
   -ProjectResourceId $projectResourceId 2>&1 | Tee-Object -FilePath $logFile -Append
 
 # Set up Fabric Lakehouse
@@ -143,12 +178,30 @@ if ($fabricCapacityId) {
     $setupLakehouse = Join-Path $localInfraPath "setup-lakehouse.ps1"
     if (Test-Path $setupLakehouse) {
         powershell -ExecutionPolicy Bypass -File $setupLakehouse `
-          -CapacityId $fabricCapacityId 2>&1 | Tee-Object -FilePath $logFile -Append
+            -CapacityId $fabricCapacityId `
+            -TenantId $tenantId `
+            -ClientId $clientId `
+            -ClientSecret $clientSecret `
+            -LabUserUpn $labUserUpn `
+            -LabUserObjectId $labUserObjectId 2>&1 | Tee-Object -FilePath $logFile 
+        -Append
         Log "Fabric Lakehouse setup complete"
     } else {
         Log "WARNING: setup-lakehouse.ps1 not found, skipping lakehouse"
     }
 }
+
+# Seed sample emails
+ $seedEmails = Join-Path $localInfraPath "seed-emails.ps1"
+ if (Test-Path $seedEmails) {
+     Log "Seeding sample emails..."
+     powershell -ExecutionPolicy Bypass -File $seedEmails `
+       -UserUpn $labUserUpn `
+       -TenantId $tenantId `
+       -ClientId $clientId `
+       -ClientSecret $clientSecret 2>&1 | Tee-Object -FilePath $logFile -Append
+     Log "Email seeding complete"
+ }
 
 Log "=== Background deploy script completed ==="
 '@
@@ -179,8 +232,8 @@ az account set -s $subscriptionId --only-show-errors
 az config set core.only_show_errors=yes --only-show-errors
 az config set bicep.use_binary_from_path=false --only-show-errors
 
-$resourceGroupName = "@lab.CloudResourceGroup(LAB006Final-ResourceGroup).Name"
-$bicepFilePath = "C:\Users\LabUser\Desktop\mvp26-LAB006-build-agentic-knowledge-bases-next-level-rag-with-azure-ai-search-main\infra\main.bicep"
+$resourceGroupName = "@lab.CloudResourceGroup(LAB532Final-ResourceGroup).Name"
+$bicepFilePath = "C:\Users\LabUser\Desktop\Build26-LAB532-main\infra\main.bicep"
 
 if (-not (Test-Path $bicepFilePath)) {
     Log "ERROR: Bicep file not found at: $bicepFilePath"
@@ -195,8 +248,11 @@ $labUserObjectId = az ad user show --id $labUserUpn --query id -o tsv
 $env:BG_SUBSCRIPTION_ID = $subscriptionId
 $env:BG_RESOURCE_GROUP = $resourceGroupName
 $env:BG_LAB_USER_OID = $labUserObjectId
+$env:BG_LAB_USER_UPN = $labUserUpn 
 $env:BG_BICEP_PATH = $bicepFilePath
-$env:BG_TENANT_ID = $tenantId
+$env:BG_CLIENT_ID = $clientId
+$env:BG_CLIENT_SECRET = $clientSecret
+$env:BG_TENANT_ID = $tenantId    
 
 Log "Launching background deploy process..."
 Start-Process -FilePath "powershell.exe" `
@@ -204,4 +260,3 @@ Start-Process -FilePath "powershell.exe" `
   -WindowStyle Hidden
 
 Log "=== Lifecycle script exiting (background process handles deployment) ==="
-

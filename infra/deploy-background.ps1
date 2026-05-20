@@ -29,6 +29,21 @@ Log "SP Object ID: $spObjectId"
 
 $deploymentName = "deployment"
 
+# Purge soft-deleted Cognitive Services accounts to prevent custom subdomain conflicts
+Log "Checking for soft-deleted Cognitive Services accounts..."
+$deletedJson = az cognitiveservices account list-deleted -o json 2>$null
+if ($deletedJson -and $deletedJson -ne "[]") {
+    $deletedAccounts = $deletedJson | ConvertFrom-Json
+    foreach ($account in $deletedAccounts) {
+        if ($account.name -like "lab532-foundry-*") {
+            $rgFromId = ($account.id -split '/')[4]
+            Log "Purging soft-deleted Cognitive Services account: $($account.name) (rg: $rgFromId, location: $($account.location))"
+            az cognitiveservices account purge --location $account.location --resource-group $rgFromId --name $account.name 2>&1 | Out-Null
+            Log "Purged: $($account.name)"
+        }
+    }
+}
+
 Log "Starting Bicep deployment..."
 $deploymentOutput = az deployment group create `
   --name $deploymentName `
