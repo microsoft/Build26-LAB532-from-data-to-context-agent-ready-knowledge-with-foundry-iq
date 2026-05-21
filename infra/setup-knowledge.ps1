@@ -80,7 +80,8 @@ if (-not (Test-Path $venvPy)) { throw "Venv python not found at $venvPy" }
 
 Write-Output "Installing Python dependencies..."
 & $venvPy -m pip install --upgrade pip --no-python-version-warning
-& $venvPy -m pip install -r $reqLocal --no-cache-dir --disable-pip-version-check
+$wheelsDir = Join-Path $repoRoot "wheels"
+& $venvPy -m pip install -r $reqLocal --no-cache-dir --disable-pip-version-check --find-links $wheelsDir
 
 Write-Output "Uploading documents to blob storage..."
 & $venvPy $pyLocal
