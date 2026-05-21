@@ -24,7 +24,7 @@ $ErrorActionPreference = "Stop"
 
 function Log {
     param([string]$msg)
-    Write-Host "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] $msg"
+    Write-Output "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] $msg"
 }
 
 # Get an app-only token for Microsoft Graph
