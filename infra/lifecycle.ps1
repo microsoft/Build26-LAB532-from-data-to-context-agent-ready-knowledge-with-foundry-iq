@@ -168,7 +168,6 @@ powershell -ExecutionPolicy Bypass -File $setupLocal `
   -OpenAIKey $openaiKey `
   -TenantId $tenantId `
   -ProjectEndpoint $projectEndpoint `
-  -TenantId $tenantId `
   -ProjectResourceId $projectResourceId 2>&1 | Tee-Object -FilePath $logFile -Append
 
 # Set up Fabric Lakehouse
@@ -182,8 +181,7 @@ if ($fabricCapacityId) {
             -ClientId $clientId `
             -ClientSecret $clientSecret `
             -LabUserUpn $labUserUpn `
-            -LabUserObjectId $labUserObjectId 2>&1 | Tee-Object -FilePath $logFile 
-        -Append
+            -LabUserObjectId $labUserObjectId 2>&1 | Tee-Object -FilePath $logFile -Append
         Log "Fabric Lakehouse setup complete"
     } else {
         Log "WARNING: setup-lakehouse.ps1 not found, skipping lakehouse"
