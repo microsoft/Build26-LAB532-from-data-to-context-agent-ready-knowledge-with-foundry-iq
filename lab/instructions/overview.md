@@ -61,7 +61,7 @@ All required Azure services including **Azure AI Search with pre-indexed data** 
 - **Azure AI Search** - Standard tier with two pre-created indexes:
   - **hrdocs:** HR policies, employee handbook, role library, company overview
   - **healthdocs:** Health insurance plans, benefits options, coverage details
-- **Azure OpenAI** - Deployed models **gpt-5.4-mini** for chat completion and answer synthesis and **text-embedding-3-large** for vector embeddings
+- **Azure OpenAI** - Deployed models **gpt-4.1** for chat completion and answer synthesis and **text-embedding-3-large** for vector embeddings
 - **Pre-computed vectors** - All 384 document chunks are already vectorized and indexed
 
 </details>
@@ -153,9 +153,9 @@ If you encounter errors related to the GPT model when running notebook cells:
 1. Navigate to +++https://portal.azure.com+++ > Select your OpenAI service.
 2. Select **Go to Microsoft Foundry**.
 3. Select **Deployments**.
-4. Verify that **gpt-5.4-mini** is deployed.
+4. Verify that **gpt-4.1** is deployed.
 5. If missing, click **Create new deployment**:
-   - Select **gpt-5.4-mini** model
+   - Select **gpt-4.1** model
    - Set **Standard** deployment type
    - Make sure your existing OpenAI resource is selected
    - Click **Deploy**
@@ -173,5 +173,8 @@ This lab includes 5 progressive notebooks covering the refreshed knowledge-base 
 5. **Work IQ + Fabric IQ** — Combine workplace and structured Fabric data in one KB
 
 Start with **part1-standard-foundry-iq-kb.ipynb** in the **notebooks/** folder and progress through each notebook sequentially.
+
+> [!TIP]
+> **Bonus: Copilot CLI sidequest** — Each notebook includes a bonus section that prints an MCP configuration for the knowledge base you just created. Follow the instructions in **notebooks/copilot-cli-sidequest.md** to add it to GitHub Copilot CLI and query your KB directly from the terminal.
 
 Once you've completed all 5 notebooks, select **Next** to review key takeaways and next steps.
