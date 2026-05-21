@@ -1,6 +1,6 @@
 # Deploy to Your Own Azure Subscription
 
-This folder contains resources for deploying the LAB006 Knowledge Base infrastructure to your own Azure subscription.
+This folder contains resources for deploying the LAB532 Knowledge Base infrastructure to your own Azure subscription.
 
 ## Prerequisites
 
@@ -28,8 +28,8 @@ You'll need permissions to:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/microsoft/mvp26-LAB006-build-agentic-knowledge-bases-next-level-rag-with-azure-ai-search.git
-cd mvp26-LAB006-build-agentic-knowledge-bases-next-level-rag-with-azure-ai-search
+git clone https://github.com/microsoft/Build26-LAB532.git
+cd Build26-LAB532
 ```
 
 ### 2. Create a Python virtual environment

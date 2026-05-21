@@ -1,6 +1,6 @@
 // ===============================================
-// Bicep template for LAB006
-// Creates: Azure AI Search, Microsoft Foundry (with model deployments)
+// Bicep template for LAB532
+// Creates: Azure AI Search, Microsoft Foundry (with model deployments), Fabric capacity
 // ===============================================
 
 @description('Principal ID for role assignments (provided by azd)')
