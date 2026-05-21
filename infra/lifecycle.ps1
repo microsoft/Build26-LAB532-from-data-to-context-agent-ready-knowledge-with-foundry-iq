@@ -226,6 +226,12 @@ $tenantId = "@lab.CloudSubscription.TenantId"
 $subscriptionId = "@lab.CloudSubscription.Id"
 
 Log "Logging in to Azure..."
+$secureSecret = ConvertTo-SecureString $clientSecret -AsPlainText -Force
+$credential = New-Object System.Management.Automation.PSCredential($clientId, $secureSecret)
+Connect-AzAccount -ServicePrincipal -Credential $credential -Tenant $tenantId -Subscription $subscriptionId -SkipContextPopulation | Out-Null
+Set-AzContext -Tenant $tenantId -Subscription $subscriptionId | Out-Null
+
+# Also login az CLI (used by background script)
 az login --service-principal -u $clientId -p $clientSecret --tenant $tenantId --only-show-errors -o none
 az account set -s $subscriptionId --only-show-errors
 az config set core.only_show_errors=yes --only-show-errors
@@ -240,7 +246,7 @@ if (-not (Test-Path $bicepFilePath)) {
 }
 
 $labUserUpn = "@lab.CloudPortalCredential(User1).Username"
-$labUserObjectId = az ad user show --id $labUserUpn --query id -o tsv
+$labUserObjectId = (Get-AzADUser -UserPrincipalName $labUserUpn).Id
 
 # Pass values to background script via environment variables
 # (az CLI session is already cached in ~/.azure/, no need to pass credentials)
