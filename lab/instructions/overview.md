@@ -40,13 +40,13 @@ In the virtual machine, sign into Windows using the following credentials:
 
 ### Access the lab repository
 
-Once signed in to the Skillable environment, you'll find the lab repository already cloned on your desktop under the folder: **Desktop > mvp26-LAB006-build-agentic-knowledge-bases-next-level-rag-with-azure-ai-search-main**.
+Once signed in to the Skillable environment, you'll find the lab repository already cloned on your desktop under the folder: **Desktop > Build26-LAB532-main**.
 
 > This folder contains all the code, notebooks, and resources you'll need for the lab.
 
 ### Open the project folder in Visual Studio Code
 
-Open Visual Studio Code and select **File > Open Folder**. Then navigate to Desktop and select the **mvp26-LAB006-build-agentic-knowledge-bases-next-level-rag-with-azure-ai-search-main** folder and then **Select Folder**.
+Open Visual Studio Code and select **File > Open Folder**. Then navigate to Desktop and select the **Build26-LAB532-main** folder and then **Select Folder**.
 
 > [!TIP]
 > * When prompted whether to trust the authors of the files, select **Yes, I trust the authors**.
@@ -61,7 +61,7 @@ All required Azure services including **Azure AI Search with pre-indexed data** 
 - **Azure AI Search** - Standard tier with two pre-created indexes:
   - **hrdocs:** HR policies, employee handbook, role library, company overview
   - **healthdocs:** Health insurance plans, benefits options, coverage details
-- **Azure OpenAI** - Deployed models **gpt-5.4-mini** for chat completion and answer synthesis and **text-embedding-3-large** for vector embeddings
+- **Azure OpenAI** - Deployed models **gpt-4.1** for chat completion and answer synthesis and **text-embedding-3-large** for vector embeddings
 - **Pre-computed vectors** - All 384 document chunks are already vectorized and indexed
 
 </details>
@@ -76,9 +76,10 @@ All required Azure services including **Azure AI Search with pre-indexed data** 
    - *AZURE_OPENAI_KEY*
    - *AZURE_OPENAI_CHATGPT_DEPLOYMENT*
    - *AZURE_OPENAI_CHATGPT_MODEL_NAME*
-   - *PROJECT_ENDPOINT*
-   - *PROJECT_RESOURCE_ID*
-   - *PROJECT_CONNECTION_NAME*
+   - *AZURE_TENANT_ID*
+   - *FABRIC_WORKSPACE_ID*
+   - *FABRIC_ONTOLOGY_ID*
+   - *MAI_GROUNDING_KEY*
 
 If these variables are present, proceed to verify the indexes in Azure Portal.
 
@@ -153,9 +154,9 @@ If you encounter errors related to the GPT model when running notebook cells:
 1. Navigate to +++https://portal.azure.com+++ > Select your OpenAI service.
 2. Select **Go to Microsoft Foundry**.
 3. Select **Deployments**.
-4. Verify that **gpt-5.4-mini** is deployed.
+4. Verify that **gpt-4.1** is deployed.
 5. If missing, click **Create new deployment**:
-   - Select **gpt-5.4-mini** model
+   - Select **gpt-4.1** model
    - Set **Standard** deployment type
    - Make sure your existing OpenAI resource is selected
    - Click **Deploy**
@@ -164,10 +165,10 @@ If you encounter errors related to the GPT model when running notebook cells:
 
 ### Work through the Jupyter notebooks
 
-This lab includes 5 progressive notebooks covering the refreshed knowledge-base plan:
+This lab includes 5 progressive notebooks covering different knowledge base and source type patterns:
 
 1. **Multi-source search indexes** — Build a knowledge base over the restored HR and health indexes
-2. **MAI Grounding MCP** — Add MAI Grounding through an MCP knowledge source
+2. **MAI Grounding MCP** — Add MAI Grounding through an MCP knowledge source for web results
 3. **Fabric IQ source** — Add Fabric IQ through a Fabric Ontology knowledge source
 4. **Work IQ source** — Bring Work IQ into the KB as a first-party source
 5. **Work IQ + Fabric IQ** — Combine workplace and structured Fabric data in one KB

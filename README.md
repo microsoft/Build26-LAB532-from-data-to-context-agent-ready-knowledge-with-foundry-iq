@@ -37,33 +37,34 @@ Once your content is in the repo, use these three phrases with Copilot to build 
 
 # [Microsoft Build 2026](https://build.microsoft.com)
 
-## 🔥 BRKXXX: SESSION TITLE
+## 🔥 LAB532: Build Agentic Knowledge Bases: Next-Level RAG with Azure AI Search
 
 ### Session Description
 
-*Add Session Description*
+In this hands-on lab, you'll build Azure AI Search knowledge bases using agentic retrieval and extend them with multiple source types. Through 5 progressive notebook exercises, you'll build a multi-source document-backed knowledge base, extend it with MAI Grounding through MCP, add Fabric IQ and Work IQ, and finish by combining Work IQ and Fabric IQ in one KB. By the end, you'll have flexible agentic knowledge bases that blend multiple source types.
 
 ### 🏫 Getting started in a guided session
 
 To get started in a guided lab session:
-- <!-- step 1 -->
-- <!-- step 2 -->
-- <!-- step 3 -->
+- Open the lab environment and sign in with the provided credentials
+- Open the **notebooks/** folder in Visual Studio Code
+- Start with **part1-standard-foundry-iq-kb.ipynb** and work through all 5 notebooks sequentially
 
 ### 🏠 Getting started in your own environment
 
 If you're following these steps at your own pace:
 - Clone this repository
-- Set up your development environment
-- <!-- step 3 -->
+- Set up your development environment (see [lab/README.md](lab/README.md) for prerequisites)
+- Configure Azure AI Search, Azure OpenAI, and related services using the `.env.sample` file
 
 ### 🧠 Learning Outcomes
 
 By the end of this session, you will be able to:
 
-- <!-- outcome 1 -->
-- <!-- outcome 2 -->
-- <!-- outcome 3 -->
+- Build a multi-source knowledge base over indexed enterprise content using Azure AI Search agentic retrieval
+- Extend a knowledge base with MAI Grounding, Fabric IQ, and Work IQ knowledge sources
+- Combine multiple source types (indexed, structured, workplace, and web-grounded) in a single knowledge base
+- Query knowledge bases with citation-backed answer synthesis
 
 ### 💬 Keep Learning with Copilot
 
@@ -71,20 +72,27 @@ Try these prompts with GitHub Copilot to explore the topics from this session. O
 
 Use these as a starting point — or write your own!
 
-<!-- Prompts will be tailored to this session's content during repo setup. -->
-
-> *Prompts coming soon — check back after the session content is finalized.*
+- "What is agentic retrieval in Azure AI Search and how does it differ from standard RAG?"
+- "How do I create a knowledge base with multiple knowledge sources in Azure AI Search?"
+- "What is MAI Grounding and how can I add it as an MCP knowledge source?"
+- "How do Fabric IQ and Work IQ integrate with Azure AI Search knowledge bases?"
 
 ### 💻 Technologies Used
 
-1. <!-- technology 1 -->
-1. <!-- technology 2 -->
-1. <!-- technology 3 -->
+1. Azure AI Search (agentic retrieval, knowledge bases)
+1. Azure OpenAI (gpt-5.4-mini, text-embedding-3-large)
+1. Model Context Protocol (MCP)
+1. Microsoft Fabric IQ and Work IQ
+1. Python and Jupyter Notebooks
 
 ### 📚 Resources and Next Steps
 
 | Resource | Description |
 |:---------|:------------|
+| [Azure AI Search](https://learn.microsoft.com/azure/search/) | Full capabilities of Azure AI Search |
+| [Design an index for agentic retrieval](https://learn.microsoft.com/azure/search/search-agentic-retrieval-how-to-index) | Best practices for structuring data for agentic retrieval |
+| [Create a knowledge base](https://learn.microsoft.com/azure/search/search-agentic-retrieval-how-to-create) | Step-by-step guide to creating and configuring knowledge bases |
+| [Answer synthesis](https://learn.microsoft.com/azure/search/search-agentic-retrieval-how-to-synthesize) | Generate grounded answers with citations |
 | [https://aka.ms/build26-next-steps](https://aka.ms/build26-next-steps) | Take the next step in your learning journey after Build 2026 |
 
 
