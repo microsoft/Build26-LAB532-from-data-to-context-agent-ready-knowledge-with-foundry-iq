@@ -175,4 +175,7 @@ This lab includes 5 progressive notebooks covering different knowledge base and 
 
 Start with **part1-standard-foundry-iq-kb.ipynb** in the **notebooks/** folder and progress through each notebook sequentially.
 
+> [!TIP]
+> **Bonus: Copilot CLI sidequest** — Each notebook includes a bonus section that prints an MCP configuration for the knowledge base you just created. Follow the instructions in **notebooks/copilot-cli-sidequest.md** to add it to GitHub Copilot CLI and query your KB directly from the terminal.
+
 Once you've completed all 5 notebooks, select **Next** to review key takeaways and next steps.
