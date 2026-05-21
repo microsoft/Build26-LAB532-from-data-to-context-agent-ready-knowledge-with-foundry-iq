@@ -34,7 +34,7 @@ from datetime import datetime
 import requests
 from azure.identity import DefaultAzureCredential
 from azure.storage.filedatalake import DataLakeServiceClient
-from dotenv import load_dotenv
+from dotenv import load_dotenv, set_key
 
 load_dotenv(override=True)
 
@@ -63,7 +63,16 @@ INCLUDE_EMBEDDINGS = os.getenv("INCLUDE_EMBEDDINGS", "false").lower() == "true"
 _CREDENTIAL = None
 
 # Logging
-LOG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "create-lakehouse.log")
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+LOG_FILE = os.path.join(SCRIPT_DIR, "create-lakehouse.log")
+REPO_ROOT = os.path.dirname(SCRIPT_DIR)
+
+
+def update_root_env(values: dict):
+    """Update the repo root .env file with key=value pairs (append or replace)."""
+    env_path = os.path.join(REPO_ROOT, ".env")
+    for key, val in values.items():
+        set_key(env_path, key, val)
 
 
 def log_message(message: str):
@@ -802,6 +811,16 @@ def main():
             log_message("\nAll tables and ontology setup completed successfully!")
             if ontology:
                 log_message(f"Ontology: {FABRIC_ONTOLOGY_NAME} ({ontology['id']})")
+            # Write outputs to repo root .env so notebooks can find them
+            env_outputs = {
+                "FABRIC_WORKSPACE_ID": workspace_id,
+                "FABRIC_LAKEHOUSE_ID": lakehouse_id,
+                "FABRIC_LAKEHOUSE_NAME": LAKEHOUSE_NAME,
+            }
+            if ontology:
+                env_outputs["FABRIC_ONTOLOGY_ID"] = ontology["id"]
+            update_root_env(env_outputs)
+            log_message(f"Updated repo root .env with {', '.join(env_outputs.keys())}")
             return True
         else:
             log_message("\nWARNING: Some tables or ontology setup failed.")
