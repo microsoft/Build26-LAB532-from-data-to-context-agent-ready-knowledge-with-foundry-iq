@@ -33,6 +33,7 @@ This repository is a Microsoft Build 2026 session content repository and should:
 - Links to slides and recordings are fine — just don't host the actual files
 - All README files should be kept up to date
 - Unused folders (containing only a placeholder README) should be removed before release
+- Always clear notebook outputs and reset execution counts before committing `.ipynb` files
 
 ### Issue Management
 When a user reports a problem, asks a question that should be tracked, or wants to file an issue:
