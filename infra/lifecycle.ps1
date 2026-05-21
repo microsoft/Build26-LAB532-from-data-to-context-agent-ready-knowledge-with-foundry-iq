@@ -4,7 +4,6 @@
 
 # Set variables
 $token = "SECRET"
-$maiGroundingKey = "SECRET"
 $targetPath = "C:\Users\LabUser\Desktop\Build26-LAB532-main"
 $tempZip = "$env:TEMP\repo.zip"
 
@@ -61,7 +60,6 @@ $bicepFilePath = $env:BG_BICEP_PATH
 $clientId = $env:BG_CLIENT_ID
 $clientSecret = $env:BG_CLIENT_SECRET
 $tenantId = $env:BG_TENANT_ID
-$maiGroundingKey = $env:BG_MAI_GROUNDING_KEY
 
 # Reuse the az CLI session from the foreground script (token cache in ~/.azure/)
 az config set core.only_show_errors=yes --only-show-errors
@@ -171,8 +169,7 @@ powershell -ExecutionPolicy Bypass -File $setupLocal `
   -TenantId $tenantId `
   -ProjectEndpoint $projectEndpoint `
   -TenantId $tenantId `
-  -ProjectResourceId $projectResourceId `
-  -MaiGroundingKey $maiGroundingKey 2>&1 | Tee-Object -FilePath $logFile -Append
+  -ProjectResourceId $projectResourceId 2>&1 | Tee-Object -FilePath $logFile -Append
 
 # Set up Fabric Lakehouse
 if ($fabricCapacityId) {
@@ -255,7 +252,6 @@ $env:BG_BICEP_PATH = $bicepFilePath
 $env:BG_CLIENT_ID = $clientId
 $env:BG_CLIENT_SECRET = $clientSecret
 $env:BG_TENANT_ID = $tenantId
-$env:BG_MAI_GROUNDING_KEY = $maiGroundingKey
 
 Log "Launching background deploy process..."
 Start-Process -FilePath "powershell.exe" `

@@ -18,7 +18,6 @@ $bicepFilePath = $env:BG_BICEP_PATH
 $clientId = $env:BG_CLIENT_ID
 $clientSecret = $env:BG_CLIENT_SECRET
 $tenantId = $env:BG_TENANT_ID
-$maiGroundingKey = $env:BG_MAI_GROUNDING_KEY
 
 # Reuse the az CLI session from the foreground script (token cache in ~/.azure/)
 az config set core.only_show_errors=yes --only-show-errors
@@ -127,8 +126,7 @@ powershell -ExecutionPolicy Bypass -File $setupLocal `
   -OpenAIKey $openaiKey `
   -TenantId $tenantId `
   -ProjectEndpoint $projectEndpoint `
-  -ProjectResourceId $projectResourceId `
-  -MaiGroundingKey $maiGroundingKey 2>&1 | Tee-Object -FilePath $logFile -Append
+  -ProjectResourceId $projectResourceId 2>&1 | Tee-Object -FilePath $logFile -Append
 
 # Set up Fabric Lakehouse
 if ($fabricCapacityId) {
