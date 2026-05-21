@@ -1,37 +1,3 @@
-# ===========================================
-# Download GitHub Repo to Skillable Desktop
-# ===========================================
-
-# Set variables
-$token = "SECRET"
-$targetPath = "C:\Users\LabUser\Desktop\Build26-LAB532-main"
-$tempZip = "$env:TEMP\repo.zip"
-
-# Download as ZIP using GitHub API
-$headers = @{
-    Authorization = "Bearer $token"
-    Accept = "application/vnd.github+json"
-}
-
-$zipUrl = "https://api.github.com/repos/microsoft/Build26-LAB532/zipball/main"
-
-Invoke-WebRequest -Uri $zipUrl -Headers $headers -OutFile $tempZip -UseBasicParsing
-
-# Extract to temp location
-$tempExtract = "$env:TEMP\extracted"
-if (Test-Path $tempExtract) {
-    Remove-Item $tempExtract -Recurse -Force
-}
-Expand-Archive -Path $tempZip -DestinationPath $tempExtract -Force
-
-# Find the extracted folder and move to final location
-$extractedFolder = Get-ChildItem $tempExtract -Directory | Select-Object -First 1
-
-if (Test-Path $targetPath) {
-    Remove-Item $targetPath -Recurse -Force
-}
-Move-Item $extractedFolder.FullName $targetPath -Force
-
 # Lifecycle — Write a self-contained background script that handles everything
 # after az login: deploy, poll, fetch outputs, run setup.
 # This lets the Skillable lifecycle action exit quickly (< 600s).
@@ -170,7 +136,7 @@ powershell -ExecutionPolicy Bypass -File $setupLocal `
   -EmbeddingDeployment $embeddingDeployment `
   -TenantId $tenantId `
   -ProjectEndpoint $projectEndpoint `
-  -ProjectResourceId $projectResourceId 2>&1 | Tee-Object -FilePath $logFile -Append
+  -ProjectResourceId $projectResourceId *>> $logFile
 
 # Set up Fabric Lakehouse
 if ($fabricCapacityId) {
@@ -183,7 +149,7 @@ if ($fabricCapacityId) {
             -ClientId $clientId `
             -ClientSecret $clientSecret `
             -LabUserUpn $labUserUpn `
-            -LabUserObjectId $labUserObjectId 2>&1 | Tee-Object -FilePath $logFile -Append
+            -LabUserObjectId $labUserObjectId *>> $logFile
         Log "Fabric Lakehouse setup complete"
     } else {
         Log "WARNING: setup-lakehouse.ps1 not found, skipping lakehouse"
@@ -198,7 +164,7 @@ if ($fabricCapacityId) {
        -UserUpn $labUserUpn `
        -TenantId $tenantId `
        -ClientId $clientId `
-       -ClientSecret $clientSecret 2>&1 | Tee-Object -FilePath $logFile -Append
+       -ClientSecret $clientSecret *>> $logFile
      Log "Email seeding complete"
  }
 
@@ -226,12 +192,6 @@ $tenantId = "@lab.CloudSubscription.TenantId"
 $subscriptionId = "@lab.CloudSubscription.Id"
 
 Log "Logging in to Azure..."
-$secureSecret = ConvertTo-SecureString $clientSecret -AsPlainText -Force
-$credential = New-Object System.Management.Automation.PSCredential($clientId, $secureSecret)
-Connect-AzAccount -ServicePrincipal -Credential $credential -Tenant $tenantId -Subscription $subscriptionId -SkipContextPopulation | Out-Null
-Set-AzContext -Tenant $tenantId -Subscription $subscriptionId | Out-Null
-
-# Also login az CLI (used by background script)
 az login --service-principal -u $clientId -p $clientSecret --tenant $tenantId --only-show-errors -o none
 az account set -s $subscriptionId --only-show-errors
 az config set core.only_show_errors=yes --only-show-errors
@@ -246,7 +206,7 @@ if (-not (Test-Path $bicepFilePath)) {
 }
 
 $labUserUpn = "@lab.CloudPortalCredential(User1).Username"
-$labUserObjectId = (Get-AzADUser -UserPrincipalName $labUserUpn).Id
+$labUserObjectId = az ad user show --id $labUserUpn --query id -o tsv
 
 # Pass values to background script via environment variables
 # (az CLI session is already cached in ~/.azure/, no need to pass credentials)

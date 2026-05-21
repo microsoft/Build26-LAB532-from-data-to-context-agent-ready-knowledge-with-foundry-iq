@@ -49,10 +49,10 @@ if (-not $WorkspaceId -and -not $CapacityId) {
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $repoRoot = $scriptDir
 
-Write-Host "=============================================="
-Write-Host " Fabric Lakehouse Setup - Zava DIY Dataset"
-Write-Host "=============================================="
-Write-Host ""
+Write-Output "==============================================" 
+Write-Output " Fabric Lakehouse Setup - Zava DIY Dataset"
+Write-Output "=============================================="
+Write-Output ""
 
 # Create .env file
 $envContent = @"
@@ -71,7 +71,7 @@ INCLUDE_EMBEDDINGS=$(if ($IncludeEmbeddings) { "true" } else { "false" })
 $envPath = Join-Path $repoRoot ".env"
 $utf8NoBom = New-Object System.Text.UTF8Encoding $false
 [System.IO.File]::WriteAllText($envPath, $envContent, $utf8NoBom)
-Write-Host "Created .env file"
+Write-Output "Created .env file"
 
 # Find Python
 $pythonCmd = (Get-Command python -ErrorAction SilentlyContinue)
@@ -81,7 +81,7 @@ if (-not $pythonCmd) { throw "Python 3.10+ is required. Please install Python." 
 # Create venv
 $venvPath = Join-Path $repoRoot ".venv"
 if (-not (Test-Path $venvPath)) {
-    Write-Host "Creating Python virtual environment..."
+    Write-Output "Creating Python virtual environment..."
     python -m venv $venvPath
 }
 
@@ -100,7 +100,7 @@ if (-not (Test-Path $reqFile)) {
 }
 if (-not (Test-Path $reqFile)) { throw "No requirements file found" }
 
-Write-Host "Installing Python dependencies..."
+Write-Output "Installing Python dependencies..."
 & $venvPy -m pip install --upgrade pip --quiet 2>$null
 & $venvPy -m pip install -r $reqFile --quiet 2>$null
 
@@ -108,8 +108,8 @@ Write-Host "Installing Python dependencies..."
 $createScript = Join-Path $repoRoot "create-lakehouse.py"
 if (-not (Test-Path $createScript)) { throw "create-lakehouse.py not found at $createScript" }
 
-Write-Host "Running create-lakehouse.py..."
-Write-Host ""
+Write-Output "Running create-lakehouse.py..."
+Write-Output ""
 
 # Set env vars for DefaultAzureCredential (EnvironmentCredential)
 if ($ClientId) { [Environment]::SetEnvironmentVariable("AZURE_CLIENT_ID", $ClientId, "Process") }
@@ -122,10 +122,10 @@ $exitCode = $LASTEXITCODE
 Pop-Location
 
 if ($exitCode -eq 0) {
-    Write-Host ""
-    Write-Host "Lakehouse and ontology setup completed successfully!"
+    Write-Output ""
+    Write-Output "Lakehouse and ontology setup completed successfully!"
 } else {
-    Write-Host ""
-    Write-Host "ERROR: Lakehouse setup failed. Check create-lakehouse.log for details."
+    Write-Output ""
+    Write-Output "ERROR: Lakehouse setup failed. Check create-lakehouse.log for details."
     exit $exitCode
 }

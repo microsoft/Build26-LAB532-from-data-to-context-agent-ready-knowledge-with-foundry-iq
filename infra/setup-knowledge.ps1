@@ -37,18 +37,18 @@ PROJECT_CONNECTION_NAME=$ProjectConnectionName
 $envPathRoot = Join-Path $repoRoot ".env"
 $utf8NoBom = New-Object System.Text.UTF8Encoding $false
 [System.IO.File]::WriteAllText($envPathRoot, $envContent, $utf8NoBom)
-Write-Host "Created .env in repo root"
+Write-Output "Created .env in repo root"
 
 # # Write .env to notebook folder WITHOUT BOM
 # $envPathNotebook = Join-Path $knowledgeFolder ".env"
 # [System.IO.File]::WriteAllText($envPathNotebook, $envContent, $utf8NoBom)
-# Write-Host "Created .env in notebook folder"
+# Write-Output "Created .env in notebook folder"
 
 $docsPath = Join-Path $repoRoot "data\ai-search-data"
 if (-not (Test-Path $docsPath)) {
     throw "Documents folder not found at $docsPath"
 }
-Write-Host "Using existing documents at: $docsPath"
+Write-Output "Using existing documents at: $docsPath"
 
 [System.Environment]::SetEnvironmentVariable("LOCAL_DOCS_PATH", $docsPath, "Process")
 
@@ -71,22 +71,22 @@ if (-not $pythonCmd) { throw "Python 3.10+ is required." }
 
 # Create venv in repo root
 if (-not (Test-Path ".venv")) {
-    Write-Host "Creating Python virtual environment in repo root..."
+    Write-Output "Creating Python virtual environment in repo root..."
     python -m venv .venv
 }
 
 $venvPy = Join-Path $repoRoot ".venv\Scripts\python.exe"
 if (-not (Test-Path $venvPy)) { throw "Venv python not found at $venvPy" }
 
-Write-Host "Installing Python dependencies..."
+Write-Output "Installing Python dependencies..."
 & $venvPy -m pip install --upgrade pip --no-python-version-warning
 & $venvPy -m pip install -r $reqLocal --no-cache-dir --disable-pip-version-check
 
-Write-Host "Uploading documents to blob storage..."
+Write-Output "Uploading documents to blob storage..."
 & $venvPy $pyLocal
 
 Pop-Location
 
-Write-Host ""
-Write-Host "Setup completed successfully!"
-Write-Host "Next: Open the notebook to create Knowledge Sources from existing indexes and a Knowledge Base with multi knowledge source setup."
+Write-Output ""
+Write-Output "Setup completed successfully!"
+Write-Output "Next: Open the notebook to create Knowledge Sources from existing indexes and a Knowledge Base with multi knowledge source setup."
