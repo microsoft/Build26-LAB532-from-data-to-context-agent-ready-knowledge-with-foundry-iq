@@ -120,6 +120,7 @@ $searchName          = $outs.AZURE_SEARCH_SERVICE_NAME.value
 $searchEndpoint      = $outs.AZURE_SEARCH_SERVICE_ENDPOINT.value
 $openaiName          = $outs.AZURE_OPENAI_SERVICE_NAME.value
 $openaiEndpoint      = $outs.AZURE_OPENAI_ENDPOINT.value
+$embeddingDeployment = $outs.AZURE_OPENAI_EMBEDDING_DEPLOYMENT.value
 $projectEndpoint     = $outs.MICROSOFT_FOUNDRY_PROJECT_ENDPOINT.value
 $projectResourceId   = $outs.MICROSOFT_FOUNDRY_PROJECT_ID.value
 $fabricCapacityId    = $outs.FABRIC_CAPACITY_ID.value
@@ -166,6 +167,7 @@ powershell -ExecutionPolicy Bypass -File $setupLocal `
   -SearchAdminKey $searchAdminKey `
   -OpenAIEndpoint $openaiEndpoint `
   -OpenAIKey $openaiKey `
+  -EmbeddingDeployment $embeddingDeployment `
   -TenantId $tenantId `
   -ProjectEndpoint $projectEndpoint `
   -ProjectResourceId $projectResourceId 2>&1 | Tee-Object -FilePath $logFile -Append
@@ -224,6 +226,12 @@ $tenantId = "@lab.CloudSubscription.TenantId"
 $subscriptionId = "@lab.CloudSubscription.Id"
 
 Log "Logging in to Azure..."
+$secureSecret = ConvertTo-SecureString $clientSecret -AsPlainText -Force
+$credential = New-Object System.Management.Automation.PSCredential($clientId, $secureSecret)
+Connect-AzAccount -ServicePrincipal -Credential $credential -Tenant $tenantId -Subscription $subscriptionId -SkipContextPopulation | Out-Null
+Set-AzContext -Tenant $tenantId -Subscription $subscriptionId | Out-Null
+
+# Also login az CLI (used by background script)
 az login --service-principal -u $clientId -p $clientSecret --tenant $tenantId --only-show-errors -o none
 az account set -s $subscriptionId --only-show-errors
 az config set core.only_show_errors=yes --only-show-errors
@@ -238,7 +246,7 @@ if (-not (Test-Path $bicepFilePath)) {
 }
 
 $labUserUpn = "@lab.CloudPortalCredential(User1).Username"
-$labUserObjectId = az ad user show --id $labUserUpn --query id -o tsv
+$labUserObjectId = (Get-AzADUser -UserPrincipalName $labUserUpn).Id
 
 # Pass values to background script via environment variables
 # (az CLI session is already cached in ~/.azure/, no need to pass credentials)
