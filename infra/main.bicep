@@ -343,7 +343,7 @@ output AZURE_OPENAI_CHATGPT_DEPLOYMENT string = llmModelDeployment.name
 @description('Microsoft Fabric capacity for lakehouse workloads')
 resource fabricCapacity 'Microsoft.Fabric/capacities@2023-11-01' = {
   name: '${resourcePrefix}fabric${uniqueSuffix}'
-  location: location
+  location: 'eastus2'
   sku: {
     name: 'F2'
     tier: 'Fabric'

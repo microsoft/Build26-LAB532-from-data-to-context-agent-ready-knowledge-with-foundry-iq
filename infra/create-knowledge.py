@@ -41,7 +41,7 @@ async def restore_index(endpoint: str, index_name: str, index_file: str, records
             
             with open(index_file_path, "r", encoding="utf-8") as in_file:
                 index_data = json.load(in_file)
-                index = SearchIndex.deserialize(index_data)
+                index = SearchIndex._deserialize(index_data, [])
                 index.name = index_name
                 index.vector_search.vectorizers[0].parameters.resource_url = azure_openai_endpoint
                 
