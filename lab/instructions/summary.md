@@ -1,6 +1,6 @@
 # Summary
 
-You've completed the updated lab on building agentic knowledge bases with Azure AI Search and multiple source types. Through 5 progressive notebooks, you built a multi-source document-backed KB, added MAI Grounding through MCP, added Fabric IQ and Work IQ, and combined Work IQ with Fabric IQ.
+You've completed the lab on building agentic knowledge bases with Azure AI Search and multiple source types. Through 5 progressive notebooks, you built a multi-source document-backed KB, added MAI Grounding through MCP, added Fabric IQ and Work IQ, and combined Work IQ with Fabric IQ.
 
 ## What you explored
 
@@ -19,12 +19,13 @@ In this lab, you started with restored HR and health search indexes, then layere
 
 Here are some ways to apply what you've learned:
 
-**Add more MCP sources** — Connect additional MCP servers to broaden what your knowledge base can query in real time.
+**Add more MCP sources** - Connect additional MCP servers to broaden what your knowledge base can query in real time.
 
-**Customize retrieval behavior** — Adjust reasoning effort levels, configure custom retrieval and answer instructions for specific sources.
+**Customize retrieval behavior** - Adjust reasoning effort levels, configure custom retrieval and answer instructions for specific sources.
 
-**Integrate with your data** — Replace the sample HR and health insurance indexes with your own enterprise content.
+**Integrate with your data** - Replace the sample HR and health insurance indexes with your own enterprise content.
 
-**Build an application experience** — Extend the KB with your own UI, orchestration, or agent layer for end users.
+**Build a conversational interface** - Extend the Foundry Agent with additional tools and a chat UI for end users.
 
-The patterns you explored in this lab form the foundation for building custom copilots, enterprise assistants, and intelligent knowledge applications that combine indexed enterprise data with structured systems, web content, and live external sources through MCP.
+The patterns you explored in this lab form the foundation for building custom copilots, enterprise assistants, and intelligent knowledge applications that combine indexed enterprise data with live external sources through MCP.
+

@@ -1,13 +1,11 @@
 
-# Lab 006: Build Agentic Knowledge Bases with Azure AI Search
+# Lab 532: Build Agentic Knowledge Bases with Azure AI Search
 
-These instructions are for participants of the **instructor-led** Workshop "Build Agentic Knowledge Bases: Next-Level RAG with Azure AI Search" at MVP Summit 2026.
+These instructions are for participants of the **instructor-led** Workshop "Build Agentic Knowledge Bases: Next-Level RAG with Azure AI Search" at Microsoft Build 2026.
 
 ## Lab Overview
 
 In this hands-on lab, you'll build Azure AI Search Knowledge Bases across a refreshed five-part flow: restored search indexes, MAI Grounding through MCP, Fabric IQ, Work IQ, and a combined Work IQ + Fabric IQ experience. By the end, you'll have flexible KBs that blend indexed, structured, workplace, and web-grounded knowledge sources.
-
-## Pre-Requisites
 
 ## Prerequisites
 
@@ -30,9 +28,6 @@ To begin, open the **notebooks/** folder and start with **part1-standard-foundry
 3. **part3-fabric-iq-to-kb.ipynb** — Add Fabric IQ through a Fabric Ontology knowledge source
 4. **part4-work-iq-to-kb.ipynb** — Add Work IQ as a first-party knowledge source
 5. **part5-work-iq-fabric-iq-to-kb.ipynb** — Combine Work IQ and Fabric IQ in one KB
-
-> [!NOTE]
-> The original MVP Summit notebook set has been preserved under `notebooks/mvp-summit-notebooks/`.
 
 Once you've completed all 5 notebooks, return to this page and select **Next >** to view the wrap-up and summary section.
 
