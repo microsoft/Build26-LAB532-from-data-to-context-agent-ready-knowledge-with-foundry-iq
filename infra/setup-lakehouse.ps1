@@ -39,6 +39,8 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$env:PYTHONIOENCODING = "utf-8"
 
 if (-not $WorkspaceId -and -not $CapacityId) {
     throw "Either -WorkspaceId or -CapacityId must be provided."

@@ -120,6 +120,7 @@ $searchName          = $outs.AZURE_SEARCH_SERVICE_NAME.value
 $searchEndpoint      = $outs.AZURE_SEARCH_SERVICE_ENDPOINT.value
 $openaiName          = $outs.AZURE_OPENAI_SERVICE_NAME.value
 $openaiEndpoint      = $outs.AZURE_OPENAI_ENDPOINT.value
+$embeddingDeployment = $outs.AZURE_OPENAI_EMBEDDING_DEPLOYMENT.value
 $projectEndpoint     = $outs.MICROSOFT_FOUNDRY_PROJECT_ENDPOINT.value
 $projectResourceId   = $outs.MICROSOFT_FOUNDRY_PROJECT_ID.value
 $fabricCapacityId    = $outs.FABRIC_CAPACITY_ID.value
@@ -166,6 +167,7 @@ powershell -ExecutionPolicy Bypass -File $setupLocal `
   -SearchAdminKey $searchAdminKey `
   -OpenAIEndpoint $openaiEndpoint `
   -OpenAIKey $openaiKey `
+  -EmbeddingDeployment $embeddingDeployment `
   -TenantId $tenantId `
   -ProjectEndpoint $projectEndpoint `
   -ProjectResourceId $projectResourceId 2>&1 | Tee-Object -FilePath $logFile -Append

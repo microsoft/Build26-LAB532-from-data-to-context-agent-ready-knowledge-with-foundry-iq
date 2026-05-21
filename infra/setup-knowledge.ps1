@@ -3,6 +3,7 @@ param(
   [Parameter(Mandatory=$true)][string]$SearchAdminKey,
   [Parameter(Mandatory=$true)][string]$OpenAIEndpoint,
   [Parameter(Mandatory=$true)][string]$OpenAIKey,
+  [string]$EmbeddingDeployment = "text-embedding-3-large",
   [string]$TenantId = "",
   [string]$ProjectEndpoint = "",
   [string]$ProjectResourceId = "",
@@ -10,6 +11,8 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$env:PYTHONIOENCODING = "utf-8"
 
 $repoRoot = "C:\Users\LabUser\Desktop\Build26-LAB532-main"
 $knowledgeFolder = Join-Path $repoRoot "notebooks"
@@ -23,6 +26,7 @@ AZURE_OPENAI_ENDPOINT=$OpenAIEndpoint
 AZURE_OPENAI_KEY=$OpenAIKey
 AZURE_OPENAI_CHATGPT_DEPLOYMENT=gpt-4.1
 AZURE_OPENAI_CHATGPT_MODEL_NAME=gpt-4.1
+AZURE_OPENAI_EMBEDDING_DEPLOYMENT=$EmbeddingDeployment
 AZURE_TENANT_ID=$TenantId
 PROJECT_ENDPOINT=$ProjectEndpoint
 PROJECT_RESOURCE_ID=$ProjectResourceId
