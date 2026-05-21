@@ -820,7 +820,7 @@ def main():
             if ontology:
                 env_outputs["FABRIC_ONTOLOGY_ID"] = ontology["id"]
             update_root_env(env_outputs)
-            log_message("Updated repo root .env with FABRIC_WORKSPACE_ID, FABRIC_LAKEHOUSE_ID, FABRIC_ONTOLOGY_ID")
+            log_message(f"Updated repo root .env with {', '.join(env_outputs.keys())}")
             return True
         else:
             log_message("\nWARNING: Some tables or ontology setup failed.")
