@@ -35,7 +35,7 @@ param embeddingModelVersion string = '1'
 param embeddingModelCapacity int = 30
 
 @description('Chat/reasoning model name')
-param llmModelName string = 'gpt-4.1'
+param llmModelName string = 'gpt-5.4'
 
 @description('Chat/reasoning model version')
 param llmModelVersion string = '2025-04-14'
@@ -55,7 +55,7 @@ var resourceNames = {
   microsoftFoundry: '${resourcePrefix}-foundry-${uniqueSuffix}'
   microsoftFoundryProject: '${resourcePrefix}-project-${uniqueSuffix}'
   embeddingDeployment: 'text-embedding-3-large'
-  llmDeployment: 'gpt-4.1'
+  llmDeployment: 'gpt-5.4'
 }
 
 // ===============================================
