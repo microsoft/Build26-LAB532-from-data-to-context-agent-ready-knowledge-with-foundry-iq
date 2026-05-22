@@ -66,6 +66,3 @@ These rules apply to all `.ipynb` files in `notebooks/`.
 - **Last cell** (before the Continue link): `## ✅ Mission complete` with `**What you built:**` and three `✓` bullets. The capstone notebook (Part 5) uses `**What you built across the lab:**` instead.
 - **Source Hunt**: Include a `### 🔍 Source Hunt` markdown cell after the references print cell in each notebook.
 - **Try your own**: Include a `> 💡 **Try your own:**` callout in the description cell before each main query cell.
-
-### Commit hygiene
-- Always clear cell outputs and reset execution counts before committing `.ipynb` files.
