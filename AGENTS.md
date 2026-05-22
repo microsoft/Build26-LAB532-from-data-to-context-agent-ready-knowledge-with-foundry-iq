@@ -48,3 +48,24 @@ When reviewing open issues at the start of each phase, summarize them and propos
 
 ### Getting Started
 If this repo still has a `GUIDANCE.md` file, that means setup isn't complete yet. Read it and follow the instructions to prepare the repo for publication.
+
+## 📓 Notebook Style Guidelines
+
+These rules apply to all `.ipynb` files in `notebooks/`.
+
+### Writing style
+- Do not use semi-colons in prose descriptions. Reword the sentence instead.
+- Do not use em dashes (`—`) in prose descriptions. Use a period to start a new sentence, or restructure.
+- Use plain dashes (`-`) only in lists, not as clause separators in running text.
+
+### Structure (per notebook)
+- **First cell**: Combined title + scenario lore + `**🎯 Mission**` bullets + `## The building blocks` explanation. Do not use separate cells for these.
+- **Lore/scenario**: Written as a Day X narrative ("Day 1 at Zava…") that motivates why the attendee needs the technical feature being taught.
+- **Mission bullets**: Three items matching what the attendee will build. Mirror these exactly in the `## ✅ Mission complete` cell at the end.
+- **Building blocks**: Explain only concepts that are NEW in this notebook. Do not re-explain concepts already introduced in earlier parts.
+- **Last cell** (before the Continue link): `## ✅ Mission complete` with `**What you built today:**` and three `✓` bullets, followed by a comparison table.
+- **Source Hunt**: Include a `### 🔍 Source Hunt` markdown cell after the references print cell in each notebook.
+- **Try your own**: Include a `> 💡 **Try your own:**` callout in the description cell before each main query cell.
+
+### Commit hygiene
+- Always clear cell outputs and reset execution counts before committing `.ipynb` files.
