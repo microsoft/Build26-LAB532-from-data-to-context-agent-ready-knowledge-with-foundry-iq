@@ -243,7 +243,7 @@ resource embeddingModelDeployment 'Microsoft.CognitiveServices/accounts/deployme
     }
   }
   sku: {
-    name: 'Standard'
+    name: 'GlobalStandard'
     capacity: embeddingModelCapacity
   }
 }
@@ -260,7 +260,7 @@ resource llmModelDeployment 'Microsoft.CognitiveServices/accounts/deployments@20
     }
   }
   sku: {
-    name: 'Standard'
+    name: 'GlobalStandard'
     capacity: llmModelCapacity
   }
   dependsOn: [
