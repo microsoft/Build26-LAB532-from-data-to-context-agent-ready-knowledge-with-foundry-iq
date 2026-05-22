@@ -63,7 +63,7 @@ These rules apply to all `.ipynb` files in `notebooks/`.
 - **Lore/scenario**: Written as a Day X narrative ("Day 1 at Zava…") that motivates why the attendee needs the technical feature being taught.
 - **Mission bullets**: Three items matching what the attendee will build. Mirror these exactly in the `## ✅ Mission complete` cell at the end.
 - **Building blocks**: Explain only concepts that are NEW in this notebook. Do not re-explain concepts already introduced in earlier parts.
-- **Last cell** (before the Continue link): `## ✅ Mission complete` with `**What you built today:**` and three `✓` bullets, followed by a comparison table.
+- **Last cell** (before the Continue link): `## ✅ Mission complete` with `**What you built:**` and three `✓` bullets. The capstone notebook (Part 5) uses `**What you built across the lab:**` instead.
 - **Source Hunt**: Include a `### 🔍 Source Hunt` markdown cell after the references print cell in each notebook.
 - **Try your own**: Include a `> 💡 **Try your own:**` callout in the description cell before each main query cell.
 
