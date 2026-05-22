@@ -29,7 +29,7 @@ Use the MCP config snippet printed by the notebook checkpoint cell. You can add 
 Using the CLI:
 
 ```powershell
-copilot mcp add --name lab532-kb --url "<KB MCP URL>" --header "api-key=<SERVICE KEY>"
+copilot mcp add --name zava-kb --url "<KB MCP URL>" --header "api-key=<SERVICE KEY>"
 ```
 
 Or edit your local config file:
@@ -44,7 +44,7 @@ Add the printed entry under `mcpServers`. If the file already has other servers,
 Start Copilot CLI and ask a question that matches the notebook you just ran:
 
 ```powershell
-copilot -i "Use the LAB532 knowledge base to answer: what health benefits are available?"
+copilot -i "Use the Zava knowledge base to answer: what health benefits are available?"
 ```
 
 For Fabric IQ, Work IQ, MAI Grounding, or the combined notebook, ask a question that explicitly mentions that source so Copilot has a reason to call the matching KB MCP server.
