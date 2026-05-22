@@ -38,7 +38,7 @@ param embeddingModelCapacity int = 30
 param llmModelName string = 'gpt-5.4'
 
 @description('Chat/reasoning model version')
-param llmModelVersion string = '2025-04-14'
+param llmModelVersion string = '2026-03-05'
 
 @description('Chat/reasoning model deployment capacity')
 @minValue(1)
