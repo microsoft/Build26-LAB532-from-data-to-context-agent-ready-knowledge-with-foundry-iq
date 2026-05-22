@@ -77,17 +77,17 @@ For more information, setup instructions for other dev clients, and to post comm
 
 <table>
 <tr>
-    <td align="center"><a href="http://github.com/pamelafox">
+    <td align="center"><a href="https://github.com/pamelafox">
         <img src="https://github.com/pamelafox.png" width="100px;" alt="Pamela Fox"/><br />
         <sub><b>Pamela Fox</b></sub></a><br />
             <a href="https://github.com/pamelafox" title="talk">📢</a>
     </td>
-    <td align="center"><a href="http://github.com/mattgotteiner">
+    <td align="center"><a href="https://github.com/mattgotteiner">
         <img src="https://github.com/mattgotteiner.png" width="100px;" alt="Matt Gotteiner"/><br />
         <sub><b>Matt Gotteiner</b></sub></a><br />
             <a href="https://github.com/mattgotteiner" title="talk">📢</a>
     </td>
-    <td align="center"><a href="http://github.com/aycabas">
+    <td align="center"><a href="https://github.com/aycabas">
         <img src="https://github.com/aycabas.png" width="100px;" alt="Ayca Bas"/><br />
         <sub><b>Ayca Bas</b></sub></a><br />
             <a href="https://github.com/aycabas" title="talk">📢</a>
