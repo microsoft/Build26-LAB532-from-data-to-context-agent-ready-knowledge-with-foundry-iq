@@ -4,7 +4,7 @@
 
 # Set variables
 $token = "SECRET"
-$targetPath = "C:\Users\LabUser\Desktop\Build26-LAB532-from-data-to-context-agent-ready-knowledge-with-foundry-iq-main"
+$targetPath = "C:\Users\LabUser\Desktop\Build26-LAB532-main"
 $tempZip = "$env:TEMP\repo.zip"
 
 # Download as ZIP using GitHub API

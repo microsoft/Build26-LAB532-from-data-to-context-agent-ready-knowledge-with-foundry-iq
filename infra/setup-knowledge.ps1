@@ -14,7 +14,7 @@ $ErrorActionPreference = "Stop"
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $env:PYTHONIOENCODING = "utf-8"
 
-$repoRoot = "C:\Users\LabUser\Desktop\Build26-LAB532-from-data-to-context-agent-ready-knowledge-with-foundry-iq-main"
+$repoRoot = "C:\Users\LabUser\Desktop\Build26-LAB532-main"
 $knowledgeFolder = Join-Path $repoRoot "notebooks"
 $infraFolder = Join-Path $repoRoot "infra"
 
