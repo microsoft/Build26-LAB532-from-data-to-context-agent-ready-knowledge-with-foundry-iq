@@ -1,10 +1,6 @@
 # Summary
 
-You've completed the lab on building agentic knowledge bases with Azure AI Search and multiple source types. Through 5 progressive notebooks, you built a multi-source document-backed KB, added MAI Grounding through MCP, added Fabric IQ and Work IQ, and combined Work IQ with Fabric IQ.
-
-## What you explored
-
-In this lab, you started with restored HR and health search indexes, then layered in MAI Grounding, structured Fabric knowledge, workplace knowledge, and a combined Work IQ + Fabric IQ retrieval experience.
+You've completed the lab on building agentic knowledge bases with Azure AI Search and multiple source types. Through 5 progressive notebooks, you built a multi-source document-backed KB, added web search results through MCP, added Fabric IQ and Work IQ, and combined Work IQ with Fabric IQ.
 
 ## Continue learning
 
@@ -28,4 +24,3 @@ Here are some ways to apply what you've learned:
 **Build a conversational interface** - Extend the Foundry Agent with additional tools and a chat UI for end users.
 
 The patterns you explored in this lab form the foundation for building custom copilots, enterprise assistants, and intelligent knowledge applications that combine indexed enterprise data with live external sources through MCP.
-

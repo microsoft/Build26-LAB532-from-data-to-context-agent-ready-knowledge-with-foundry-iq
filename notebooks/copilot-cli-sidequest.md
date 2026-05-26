@@ -47,7 +47,8 @@ Start Copilot CLI and ask a question that matches the notebook you just ran:
 copilot -i "Use the Zava knowledge base to answer: what health benefits are available?"
 ```
 
-For Fabric IQ, Work IQ, MAI Grounding, or the combined notebook, ask a question that explicitly mentions that source so Copilot has a reason to call the matching KB MCP server.
+You can try asking the question without prefacing it with "Use Zava knowledge base to answer", but the Copilot CLI agent may not choose to invoke the KB MCP server, as it may answer from its weights or using a different tool.
+
 
 ## 4. Clean up local MCP config when finished
 
