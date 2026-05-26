@@ -40,13 +40,13 @@ In the virtual machine, sign into Windows using the following credentials:
 
 ### Access the lab repository
 
-Once signed in to the Skillable environment, you'll find the lab repository already cloned on your desktop under the folder: **Desktop > Build26-LAB532-main**.
+Once signed in to the Skillable environment, you'll find the lab repository already cloned on your desktop under the folder: **Desktop > Build26-LAB532-from-data-to-context-agent-ready-knowledge-with-foundry-iq-main**.
 
 > This folder contains all the code, notebooks, and resources you'll need for the lab.
 
 ### Open the project folder in Visual Studio Code
 
-Open Visual Studio Code and select **File > Open Folder**. Then navigate to Desktop and select the **Build26-LAB532-main** folder and then **Select Folder**.
+Open Visual Studio Code and select **File > Open Folder**. Then navigate to Desktop and select the **Build26-LAB532-from-data-to-context-agent-ready-knowledge-with-foundry-iq-main** folder and then **Select Folder**.
 
 > [!TIP]
 > * When prompted whether to trust the authors of the files, select **Yes, I trust the authors**.

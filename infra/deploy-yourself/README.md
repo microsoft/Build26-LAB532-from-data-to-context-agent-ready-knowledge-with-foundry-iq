@@ -28,8 +28,8 @@ You'll need permissions to:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/microsoft/Build26-LAB532.git
-cd Build26-LAB532
+git clone https://github.com/microsoft/Build26-LAB532-from-data-to-context-agent-ready-knowledge-with-foundry-iq.git
+cd Build26-LAB532-from-data-to-context-agent-ready-knowledge-with-foundry-iq
 ```
 
 ### 2. Create a Python virtual environment

@@ -6,7 +6,7 @@
     create-lakehouse.py to provision a Fabric Lakehouse with Zava DIY data.
     
     This script follows the same pattern as setup-knowledge.ps1 in the
-    Build26-LAB532 infra folder and can be called from a postprovision hook.
+    Build26-LAB532-from-data-to-context-agent-ready-knowledge-with-foundry-iq infra folder and can be called from a postprovision hook.
 .PARAMETER WorkspaceId
     The Microsoft Fabric workspace GUID where the lakehouse will be created.
     If not provided, a workspace will be auto-created using CapacityId.
