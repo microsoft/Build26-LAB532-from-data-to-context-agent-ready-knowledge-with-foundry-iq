@@ -8,7 +8,7 @@
 
 ### Session Description
 
-In this hands-on lab, you'll build Azure AI Search knowledge bases using agentic retrieval and extend them with multiple source types. Through 5 progressive notebook exercises, you'll build a multi-source document-backed knowledge base, extend it with MAI Grounding through MCP, add Fabric IQ and Work IQ, and finish by combining Work IQ and Fabric IQ in one KB. By the end, you'll have flexible agentic knowledge bases that blend multiple source types.
+In this hands-on lab, you'll build Azure AI Search knowledge bases using agentic retrieval and extend them with multiple source types. Through 5 progressive notebook exercises, you'll build a multi-source document-backed knowledge base, extend it with web search through MCP, add Fabric IQ and Work IQ, and finish by combining Work IQ and Fabric IQ in one KB. By the end, you'll have flexible agentic knowledge bases that blend multiple source types.
 
 ### 🏫 Getting started in a guided session
 
@@ -29,20 +29,9 @@ If you're following these steps at your own pace:
 By the end of this session, you will be able to:
 
 - Build a multi-source knowledge base over indexed enterprise content using Azure AI Search agentic retrieval
-- Extend a knowledge base with MAI Grounding, Fabric IQ, and Work IQ knowledge sources
+- Extend a knowledge base with Microsoft Speedbird Search, Fabric IQ, and Work IQ knowledge sources
 - Combine multiple source types (indexed, structured, workplace, and web-grounded) in a single knowledge base
 - Query knowledge bases with citation-backed answer synthesis
-
-### 💬 Keep Learning with Copilot
-
-Try these prompts with GitHub Copilot to explore the topics from this session. Open Copilot Chat in VS Code (`Ctrl+Alt+I` on Windows/Linux, `Cmd+Shift+I` on Mac), paste a prompt, and see what you learn. Try connecting the [Microsoft Learn MCP Server](#-microsoft-learn-mcp-server) for the latest official documentation.
-
-Use these as a starting point — or write your own!
-
-- "What is agentic retrieval in Azure AI Search and how does it differ from standard RAG?"
-- "How do I create a knowledge base with multiple knowledge sources in Azure AI Search?"
-- "What is MAI Grounding and how can I add it as an MCP knowledge source?"
-- "How do Fabric IQ and Work IQ integrate with Azure AI Search knowledge bases?"
 
 ### 💻 Technologies Used
 

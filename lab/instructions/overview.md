@@ -25,7 +25,7 @@ If you need to sign in to any Azure or Microsoft 365 apps, use the following cre
 
 In this hands-on lab, you'll build an Azure AI Search knowledge base using agentic retrieval and extend it with Model Context Protocol (MCP) knowledge sources. You'll connect the knowledge base to both indexed enterprise content and live MCP servers, enabling grounded, citation-backed answers across multiple systems.
 
-Through 5 progressive notebook exercises, you'll build a multi-source document-backed knowledge base, extend it with MAI Grounding through MCP, add Fabric IQ and Work IQ, and finish by combining Work IQ and Fabric IQ in one KB. By the end, you'll have flexible agentic knowledge bases that blend multiple source types.
+Through 5 progressive notebook exercises, you'll build a multi-source document-backed knowledge base, extend it with web search results through MCP, add Fabric IQ and Work IQ, and finish by combining Work IQ and Fabric IQ in one KB. By the end, you'll have flexible agentic knowledge bases that blend multiple source types.
 
 ## Getting started
 
@@ -79,7 +79,7 @@ All required Azure services including **Azure AI Search with pre-indexed data** 
    - *AZURE_TENANT_ID*
    - *FABRIC_WORKSPACE_ID*
    - *FABRIC_ONTOLOGY_ID*
-   - *MAI_GROUNDING_KEY*
+   - *MS_SPEEDBIRD_SEARCH_KEY*
 
 If these variables are present, proceed to verify the indexes in Azure Portal.
 
@@ -99,83 +99,19 @@ Confirm that the search indexes have been created successfully:
 
 If your indexes are present and populated, your environment is ready to use. You can now proceed to start with the Jupyter notebooks.
 
-<details>
-<summary><strong>⚠️ Troubleshooting ⚠️ click to expand if environment setup fails!</strong></summary>
-
-If the automated environment setup fails, follow these steps to configure your environment manually:
-
-**Step 1: Configure environment variables**
-
-1. In Visual Studio Code, locate the **.env.sample** file in the project root folder.
-2. Rename **.env.sample** to **.env**.
-3. Gather the required credentials from Azure Portal:
-
-   **For Azure AI Search:**
-   - Navigate to **Azure Portal** > Search for +++lab532-search+++ > Select your AI Search service
-   - Go to **Settings** > **Keys**
-   - Copy the **URL** (endpoint) and **Primary admin key**
-
-   **For Azure OpenAI:**
-   - Navigate to **Azure Portal** > Search for +++lab532-openai+++ > Select your OpenAI service
-   - Go to **Keys and Endpoint**
-   - Copy the **Endpoint** and **KEY 1**
-
-   **For Azure Storage:**
-   - Navigate to **Azure Portal** > Search for +++lab532st+++ > Select your Storage Account (it will look like *lab532st...*)
-   - Go to **Security + networking** > **Access keys**
-   - Copy the **Connection string** from key1
-
-4. Update the **.env** file with your values (replace the placeholder values).
-
-**Step 2: Create Python virtual environment**
-
-1. Open the first notebook **notebooks/part1-standard-foundry-iq-kb.ipynb**.
-2. Run the first code cell and when prompted to select a kernel, choose **Create New Environment**.
-3. Select **Venv** and then select the **requirements.txt** file in the **notebooks/** folder.
-4. Wait for the virtual environment to be created.
-
-**Step 3: Run knowledge base setup script**
-
-1. Open a new terminal in Visual Studio Code (**Terminal** > **New Terminal**).
-2. Activate the virtual environment by running:
-
-   +++.\.venv\Scripts\Activate.ps1+++
-
-3. Run the knowledge base creation script:
-
-   +++python infra/create-knowledge.py+++
-
-4. Wait for the script to complete. It will create and populate the required indexes. Check **Azure AI Search > Search management > Indexes** to verify that the indexes **hrdocs** and **healthdocs** are created and populated with documents.
-
-**Step 4: Verify GPT-4.1 model deployment**
-
-If you encounter errors related to the GPT model when running notebook cells:
-
-1. Navigate to +++https://portal.azure.com+++ > Select your OpenAI service.
-2. Select **Go to Microsoft Foundry**.
-3. Select **Deployments**.
-4. Verify that **gpt-5.4** is deployed.
-5. If missing, click **Create new deployment**:
-   - Select **gpt-5.4** model
-   - Set **Standard** deployment type
-   - Make sure your existing OpenAI resource is selected
-   - Click **Deploy**
-
-</details>
-
 ### Work through the Jupyter notebooks
 
 This lab includes 5 progressive notebooks covering different knowledge base and source type patterns:
 
-1. **Multi-source search indexes** — Build a knowledge base over the restored HR and health indexes
-2. **MAI Grounding MCP** — Add MAI Grounding through an MCP knowledge source for web results
-3. **Fabric IQ source** — Add Fabric IQ through a Fabric Ontology knowledge source
-4. **Work IQ source** — Bring Work IQ into the KB as a first-party source
-5. **Work IQ + Fabric IQ** — Combine workplace and structured Fabric data in one KB
+1. **Multi-source search indexes** - Build a knowledge base over the restored HR and health indexes
+2. **Microsoft Speedbird Search MCP** - Add Microsoft Speedbird Search through an MCP knowledge source for web results
+3. **Fabric IQ source** - Add Fabric IQ through a Fabric Ontology knowledge source
+4. **Work IQ source** - Bring Work IQ into the KB as a first-party source
+5. **Work IQ + Fabric IQ** - Combine workplace and structured Fabric data in one KB
 
 Start with **part1-standard-foundry-iq-kb.ipynb** in the **notebooks/** folder and progress through each notebook sequentially.
 
 > [!TIP]
-> **Bonus: Copilot CLI sidequest** — Each notebook includes a bonus section that prints an MCP configuration for the knowledge base you just created. Follow the instructions in **notebooks/copilot-cli-sidequest.md** to add it to GitHub Copilot CLI and query your KB directly from the terminal.
+> **Bonus: Copilot CLI sidequest** - Each notebook includes a bonus section that prints an MCP configuration for the knowledge base you just created. Follow the instructions in **notebooks/copilot-cli-sidequest.md** to add it to GitHub Copilot CLI and query your KB directly from the terminal.
 
 Once you've completed all 5 notebooks, select **Next** to review key takeaways and next steps.
