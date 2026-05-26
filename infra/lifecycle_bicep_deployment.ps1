@@ -116,7 +116,7 @@ if ($missingParams.Count -gt 0) {
     exit 1
 }
 
-$localInfraPath = "C:\Users\LabUser\Desktop\Build26-LAB532-main\infra"
+$localInfraPath = "C:\Users\LabUser\Desktop\Build26-LAB532-from-data-to-context-agent-ready-knowledge-with-foundry-iq-main\infra"
 $setupLocal = Join-Path $localInfraPath "setup-knowledge.ps1"
 
 if (-not (Test-Path $setupLocal)) {
@@ -124,7 +124,7 @@ if (-not (Test-Path $setupLocal)) {
     exit 1
 }
 
-$docsPath = "C:\Users\LabUser\Desktop\Build26-LAB532-main\data\ai-search-data"
+$docsPath = "C:\Users\LabUser\Desktop\Build26-LAB532-from-data-to-context-agent-ready-knowledge-with-foundry-iq-main\data\ai-search-data"
 [Environment]::SetEnvironmentVariable("LOCAL_DOCS_PATH", $docsPath, "Process")
 
 Log "Running setup-knowledge.ps1..."
@@ -192,13 +192,13 @@ $tenantId = "@lab.CloudSubscription.TenantId"
 $subscriptionId = "@lab.CloudSubscription.Id"
 
 Log "Logging in to Azure..."
-az login --service-principal -u $clientId -p $clientSecret --tenant $tenantId --only-show-errors -o none
+az login --service-principal -u $clientId -p $clientSecret --tenant $tenantId --skip-subscription-discovery
 az account set -s $subscriptionId --only-show-errors
 az config set core.only_show_errors=yes --only-show-errors
 az config set bicep.use_binary_from_path=false --only-show-errors
 
 $resourceGroupName = "@lab.CloudResourceGroup(LAB532Final-ResourceGroup).Name"
-$bicepFilePath = "C:\Users\LabUser\Desktop\Build26-LAB532-main\infra\main.bicep"
+$bicepFilePath = "C:\Users\LabUser\Desktop\Build26-LAB532-from-data-to-context-agent-ready-knowledge-with-foundry-iq-main\infra\main.bicep"
 
 if (-not (Test-Path $bicepFilePath)) {
     Log "ERROR: Bicep file not found at: $bicepFilePath"
