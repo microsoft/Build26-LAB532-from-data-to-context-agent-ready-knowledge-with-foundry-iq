@@ -1,55 +1,56 @@
 # Copilot CLI sidequest: use your KB as an MCP server
 
-Each notebook creates a separate Azure AI Search knowledge base. After the retrieve cell succeeds, run the sidequest checkpoint cell. It prints:
-
-1. The KB MCP URL.
-2. The `api-key` auth header to use for the MCP server.
-3. A ready-to-copy MCP config snippet.
+Each notebook creates a separate Foundry IQ knowledge base. After the retrieve cell succeeds, run the sidequest checkpoint cell. It prints a ready-to-copy MCP configuration command.
 
 > Do not paste service keys or bearer tokens into GitHub issues, pull requests, chat, or any committed file. Keep them in your local Copilot MCP configuration only.
 
+## 1. Sign in to GitHub
+
+Login at https://github.com/enterprises/skillable-events/sso
+
+You will be signed into a special account created for the lab environment, not your actual GitHub account.
+
 ## 1. Sign in to GitHub Copilot CLI
 
-Install and sign in to GitHub Copilot CLI if you have not already:
+Open the Terminal in VS Code (Terminal > New Terminal).
+
+Sign in to GitHub Copilot CLI:
 
 ```powershell
-copilot auth login
+copilot login
 ```
 
-You can confirm the CLI is available with:
+As part of the authorization step, you will be prompted to enter a 8-digit device code that is printed in the terminal.
 
-```powershell
-copilot --help
-```
 
 ## 2. Add the KB MCP server
 
-Use the MCP config snippet printed by the notebook checkpoint cell. You can add it through the CLI or paste it into your local MCP config file.
-
-Using the CLI:
+Run the command printed by the notebook checkpoint cell. It will look like this:
 
 ```powershell
-copilot mcp add --name zava-kb --url "<KB MCP URL>" --header "api-key=<SERVICE KEY>"
+copilot mcp add zava-kb "<KB MCP URL>" --header "api-key=<SERVICE KEY>"
 ```
 
-Or edit your local config file:
+When it succeeds, you will see output like this:
 
-- Windows: `C:\Users\<USERNAME>\.copilot\mcp-config.json`
-- macOS/Linux: `~/.copilot/mcp-config.json`
+```
+Added server "zava-kb"
 
-Add the printed entry under `mcpServers`. If the file already has other servers, merge the new server entry rather than replacing the whole file.
+zava-kb
+  Type: http
+  URL: https://lab532-search-2ijs67lu3y3ty.search.windows.net/knowledgebases/multisource-search-knowledge-base/mcp?api-version=2026-05-01-preview
+  Headers:
+    api-key: ***
+  Tools: * (all)
+  Source: User
+```
 
 ## 3. Ask a question grounded by the KB
 
-Start Copilot CLI and ask a question that matches the notebook you just ran:
+Ask Copilot a question that matches the notebook you just ran. For example:
 
 ```powershell
 copilot -i "Use the Zava knowledge base to answer: what health benefits are available?"
 ```
 
 You can try asking the question without prefacing it with "Use Zava knowledge base to answer", but the Copilot CLI agent may not choose to invoke the KB MCP server, as it may answer from its weights or using a different tool.
-
-
-## 4. Clean up local MCP config when finished
-
-Remove the temporary server entry from your local MCP config, or run the corresponding Copilot CLI remove command if your installed CLI version supports it.
