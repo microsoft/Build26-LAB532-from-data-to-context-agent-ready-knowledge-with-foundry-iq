@@ -104,7 +104,7 @@ If your indexes are present and populated, your environment is ready to use. You
 This lab includes 5 progressive notebooks covering different knowledge base and source type patterns:
 
 1. **Multi-source search indexes** - Build a knowledge base over those search indexes plus an uploaded file
-2. **Microsoft Speedbird Search** - Add Microsoft Speedbird Search through an MCP knowledge source to ground answers in web results
+2. **Web IQ source** - Add Web IQ through an MCP knowledge source to ground answers in web results
 3. **Fabric IQ source** - Add Fabric IQ through a Fabric Ontology knowledge source
 4. **Work IQ source** - Bring Work IQ into the KB as a first-party source, authenticated based on your user login
 5. **Work IQ + Fabric IQ** - Combine workplace data and structured Fabric data in one knowledge base
