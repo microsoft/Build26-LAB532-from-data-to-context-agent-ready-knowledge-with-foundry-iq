@@ -10,7 +10,7 @@ Login at https://github.com/enterprises/skillable-events/sso
 
 You will be signed into a special account created for the lab environment, not your actual GitHub account.
 
-## 1. Sign in to GitHub Copilot CLI
+## 2. Sign in to GitHub Copilot CLI
 
 Open the Terminal in VS Code (Terminal > New Terminal).
 
@@ -20,10 +20,10 @@ Sign in to GitHub Copilot CLI:
 copilot login
 ```
 
-As part of the authorization step, you will be prompted to enter a 8-digit device code that is printed in the terminal.
+As part of the authorization step, you will be prompted to enter an 8-digit device code that is printed in the terminal.
 
 
-## 2. Add the KB MCP server
+## 3. Add the KB MCP server
 
 Run the command printed by the notebook checkpoint cell. It will look like this:
 
