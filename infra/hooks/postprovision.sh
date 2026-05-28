@@ -14,6 +14,9 @@ OPENAI_KEY=$(az cognitiveservices account keys list \
     --name "$AZURE_OPENAI_SERVICE_NAME" \
     --query key1 -o tsv)
 
+# Get tenant ID for notebooks that need it (Parts 3, 4, 5)
+TENANT_ID=$(az account show --query tenantId -o tsv)
+
 # Write .env file for notebooks
 cat > .env << EOF
 # Azure AI Search Configuration
@@ -25,11 +28,13 @@ AZURE_OPENAI_ENDPOINT=${AZURE_OPENAI_ENDPOINT}
 AZURE_OPENAI_KEY=${OPENAI_KEY}
 AZURE_OPENAI_CHATGPT_DEPLOYMENT=${AZURE_OPENAI_CHATGPT_DEPLOYMENT}
 AZURE_OPENAI_CHATGPT_MODEL_NAME=gpt-5.4
+AZURE_OPENAI_EMBEDDING_DEPLOYMENT=${AZURE_OPENAI_EMBEDDING_DEPLOYMENT}
 
-# Optional project configuration
-PROJECT_ENDPOINT=${MICROSOFT_FOUNDRY_PROJECT_ENDPOINT}
-PROJECT_RESOURCE_ID=${MICROSOFT_FOUNDRY_PROJECT_ID}
-PROJECT_CONNECTION_NAME=kb-mcp-connection
+# Tenant and project configuration
+AZURE_TENANT_ID=${TENANT_ID}
+
+# Fabric configuration (populated by lakehouse setup if capacity was deployed)
+FABRIC_CAPACITY_ID=${FABRIC_CAPACITY_ID}
 
 # GitHub Token (optional for Part 5 MCP server scenarios)
 # GITHUB_TOKEN=
@@ -52,3 +57,19 @@ else
 fi
 
 echo "Postprovision complete! Open notebooks/ to start the lab."
+
+# Set up Fabric Lakehouse (if capacity was deployed)
+if [ -n "$FABRIC_CAPACITY_ID" ]; then
+    echo "Setting up Fabric Lakehouse..."
+    if [ -f "infra/create-lakehouse.py" ]; then
+        # create-lakehouse.py reads config from .env via load_dotenv()
+        python3 infra/create-lakehouse.py
+        echo "Fabric Lakehouse setup complete"
+    else
+        echo "WARNING: create-lakehouse.py not found, skipping lakehouse setup"
+    fi
+fi
+
+# Note: Email seeding (seed-emails.ps1) requires a service principal with
+# Mail.Send application permission and is only used in the Skillable hosted lab.
+# For self-deploy, Part 4 (Work IQ) will use your own mailbox data.

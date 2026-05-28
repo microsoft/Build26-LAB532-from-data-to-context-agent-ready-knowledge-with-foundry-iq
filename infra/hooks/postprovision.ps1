@@ -13,6 +13,9 @@ $openaiKey = az cognitiveservices account keys list `
     --name $env:AZURE_OPENAI_SERVICE_NAME `
     --query key1 -o tsv
 
+# Get tenant ID for notebooks that need it (Parts 3, 4, 5)
+$tenantId = az account show --query tenantId -o tsv
+
 # Write .env file for notebooks
 $envContent = @"
 # Azure AI Search Configuration
@@ -24,11 +27,13 @@ AZURE_OPENAI_ENDPOINT=$($env:AZURE_OPENAI_ENDPOINT)
 AZURE_OPENAI_KEY=$openaiKey
 AZURE_OPENAI_CHATGPT_DEPLOYMENT=$($env:AZURE_OPENAI_CHATGPT_DEPLOYMENT)
 AZURE_OPENAI_CHATGPT_MODEL_NAME=gpt-5.4
+AZURE_OPENAI_EMBEDDING_DEPLOYMENT=$($env:AZURE_OPENAI_EMBEDDING_DEPLOYMENT)
 
-# Optional project configuration
-PROJECT_ENDPOINT=$($env:MICROSOFT_FOUNDRY_PROJECT_ENDPOINT)
-PROJECT_RESOURCE_ID=$($env:MICROSOFT_FOUNDRY_PROJECT_ID)
-PROJECT_CONNECTION_NAME=kb-mcp-connection
+# Tenant and project configuration
+AZURE_TENANT_ID=$tenantId
+
+# Fabric configuration (populated by lakehouse setup if capacity was deployed)
+FABRIC_CAPACITY_ID=$($env:FABRIC_CAPACITY_ID)
 
 # GitHub Token (optional for Part 5 MCP server scenarios)
 # GITHUB_TOKEN=
@@ -61,10 +66,16 @@ Write-Host "Postprovision complete! Open notebooks/ to start the lab."
 # Set up Fabric Lakehouse (if capacity was deployed)
 if ($env:FABRIC_CAPACITY_ID) {
     Write-Host "Setting up Fabric Lakehouse..."
-    $setupLakehouse = Join-Path $PWD "infra\setup-lakehouse.ps1"
-    if (Test-Path $setupLakehouse) {
-        & $setupLakehouse -CapacityId $env:FABRIC_CAPACITY_ID
+    $createLakehousePath = Join-Path $PWD "infra\create-lakehouse.py"
+    if (Test-Path $createLakehousePath) {
+        # create-lakehouse.py reads config from .env via load_dotenv()
+        python $createLakehousePath
+        Write-Host "Fabric Lakehouse setup complete"
     } else {
-        Write-Host "WARNING: setup-lakehouse.ps1 not found, skipping lakehouse setup"
+        Write-Host "WARNING: create-lakehouse.py not found, skipping lakehouse setup"
     }
 }
+
+# Note: Email seeding (seed-emails.ps1) requires a service principal with
+# Mail.Send application permission and is only used in the Skillable hosted lab.
+# For self-deploy, Part 4 (Work IQ) will use your own mailbox data.
