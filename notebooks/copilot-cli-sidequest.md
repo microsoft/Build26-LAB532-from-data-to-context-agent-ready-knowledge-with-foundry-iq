@@ -1,8 +1,6 @@
 # Copilot CLI sidequest: use your KB as an MCP server
 
-Each notebook creates a separate Foundry IQ knowledge base. After the retrieve cell succeeds, run the sidequest checkpoint cell. It prints a ready-to-copy MCP configuration command.
-
-> Do not paste service keys or bearer tokens into GitHub issues, pull requests, chat, or any committed file. Keep them in your local Copilot MCP configuration only.
+Every Foundry IQ knowledge base exposes an MCP server, and you can use GitHub Copilot CLI to ask questions that can be answered by that MCP server. Follow the instructions here to set up Copilot CLI.
 
 ## 1. Sign in to GitHub
 
@@ -45,7 +43,7 @@ zava-kb
   Source: User
 ```
 
-## 3. Ask a question grounded by the KB
+## 4. Ask a question grounded by the KB
 
 Ask Copilot a question that matches the notebook you just ran. For example:
 
