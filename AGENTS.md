@@ -65,4 +65,4 @@ These rules apply to all `.ipynb` files in `notebooks/`.
 - **Mission bullets**: 1-3 items matching what the attendee will build. The `## ✅ Mission complete` cell at the end should cover the same outcomes, but may expand on them with fuller explanations.
 - **Building blocks**: Optional. If included, explain only concepts that are NEW in this notebook and avoid re-explaining concepts already introduced in earlier parts.
 - **Last cell** (before the Continue link): `## ✅ Mission complete` with `**What you built:**` and `✓` bullets. The capstone notebook (Part 5) uses `**What you built across the lab:**` instead.
-- **Source Hunt**: Include a `#### 🔍 Source Hunt` markdown cell after the references print cell in each notebook.
+- **Source Hunt**: Include a `#### 🔍 Source Hunt` markdown cell after the references print cell and activity log cells in each notebook.
