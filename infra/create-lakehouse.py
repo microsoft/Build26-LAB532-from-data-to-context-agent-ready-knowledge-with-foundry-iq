@@ -817,8 +817,6 @@ def main():
             # Write outputs to repo root .env so notebooks can find them
             env_outputs = {
                 "FABRIC_WORKSPACE_ID": workspace_id,
-                "FABRIC_LAKEHOUSE_ID": lakehouse_id,
-                "FABRIC_LAKEHOUSE_NAME": LAKEHOUSE_NAME,
             }
             if ontology:
                 env_outputs["FABRIC_ONTOLOGY_ID"] = ontology["id"]

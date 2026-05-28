@@ -48,11 +48,12 @@ azd up
 
 This will:
 
-- Provision all Azure resources
-- Fetch API keys and write a `.env` file
+- Provision all Azure resources (AI Search, Foundry project, OpenAI models, Fabric capacity)
+- Fetch API keys and write a `.env` file with all required variables
 - Create search indexes and upload sample data
+- Set up the Fabric Lakehouse with Zava DIY dataset and ontology
 
-> **Note:** The refreshed hosted lab uses the pre-created `magottei-eastus2euap` service. If you deploy your own environment, update `notebooks/.env` with your service endpoint, admin key, Azure OpenAI endpoint, and model deployment before running the notebooks.
+> **Note:** Email seeding (used in the hosted Skillable lab for Part 4 - Work IQ) requires a service principal with `Mail.Send` application permission and is **not run** during self-deploy. Part 4 will use your own mailbox data instead.
 
 ### 4. Start the Lab
 

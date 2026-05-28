@@ -16,7 +16,6 @@ Key constraints:
 - Do not modify LICENSE, LICENSE-DOCS, CODE_OF_CONDUCT.md, or SECURITY.md.
 - Do not add large binary files (PowerPoint, video, recordings) to the repo. Links are fine.
 - The `_remove-before-publish/` folder is for source materials (abstracts, screenshots, notes). Its contents are gitignored — scan it for context but never try to commit files from it. Direct creators to put reference materials there, not in the repo root.
-- Use the Microsoft Learn MCP Server (configured in .vscode/mcp.json) to find relevant learn.microsoft.com links when populating resource sections.
 
 ### Issue Support
 If a user asks for help filing an issue, or reports a problem:

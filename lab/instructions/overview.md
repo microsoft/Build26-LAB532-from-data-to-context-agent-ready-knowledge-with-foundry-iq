@@ -76,10 +76,10 @@ All required Azure services including **Azure AI Search with pre-indexed data** 
    - *AZURE_OPENAI_KEY*
    - *AZURE_OPENAI_CHATGPT_DEPLOYMENT*
    - *AZURE_OPENAI_CHATGPT_MODEL_NAME*
+   - *AZURE_OPENAI_EMBEDDING_DEPLOYMENT*
    - *AZURE_TENANT_ID*
    - *FABRIC_WORKSPACE_ID*
    - *FABRIC_ONTOLOGY_ID*
-   - *MS_SPEEDBIRD_SEARCH_KEY*
 
 If these variables are present, proceed to verify the indexes in Azure Portal.
 
@@ -103,11 +103,11 @@ If your indexes are present and populated, your environment is ready to use. You
 
 This lab includes 5 progressive notebooks covering different knowledge base and source type patterns:
 
-1. **Multi-source search indexes** - Build a knowledge base over the restored HR and health indexes
-2. **Microsoft Speedbird Search MCP** - Add Microsoft Speedbird Search through an MCP knowledge source for web results
+1. **Multi-source search indexes** - Build a knowledge base over those search indexes plus an uploaded file
+2. **Web IQ source** - Add Web IQ through an MCP knowledge source to ground answers in web results
 3. **Fabric IQ source** - Add Fabric IQ through a Fabric Ontology knowledge source
-4. **Work IQ source** - Bring Work IQ into the KB as a first-party source
-5. **Work IQ + Fabric IQ** - Combine workplace and structured Fabric data in one KB
+4. **Work IQ source** - Bring Work IQ into the KB as a first-party source, authenticated based on your user login
+5. **Work IQ + Fabric IQ** - Combine workplace data and structured Fabric data in one knowledge base
 
 Start with **part1-standard-foundry-iq-kb.ipynb** in the **notebooks/** folder and progress through each notebook sequentially.
 

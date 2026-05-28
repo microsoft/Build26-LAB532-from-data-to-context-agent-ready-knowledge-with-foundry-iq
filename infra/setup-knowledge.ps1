@@ -20,17 +20,25 @@ $infraFolder = Join-Path $repoRoot "infra"
 
 # Create .env content
 $envContent = @"
+# Azure AI Search Configuration
 AZURE_SEARCH_SERVICE_ENDPOINT=$SearchEndpoint
 AZURE_SEARCH_ADMIN_KEY=$SearchAdminKey
+
+# Azure OpenAI Configuration
 AZURE_OPENAI_ENDPOINT=$OpenAIEndpoint
 AZURE_OPENAI_KEY=$OpenAIKey
 AZURE_OPENAI_CHATGPT_DEPLOYMENT=gpt-5.4
 AZURE_OPENAI_CHATGPT_MODEL_NAME=gpt-5.4
 AZURE_OPENAI_EMBEDDING_DEPLOYMENT=$EmbeddingDeployment
+
+# Tenant and project configuration
 AZURE_TENANT_ID=$TenantId
-PROJECT_ENDPOINT=$ProjectEndpoint
-PROJECT_RESOURCE_ID=$ProjectResourceId
-PROJECT_CONNECTION_NAME=$ProjectConnectionName
+
+# Fabric configuration (populated by lakehouse setup if capacity was deployed)
+FABRIC_CAPACITY_ID=
+
+# GitHub Token (optional for Part 5 MCP server scenarios)
+# GITHUB_TOKEN=
 "@
 
 # Write .env to repo root WITHOUT BOM

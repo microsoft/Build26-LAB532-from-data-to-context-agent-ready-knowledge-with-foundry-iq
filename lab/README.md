@@ -5,7 +5,7 @@ These instructions are for participants of the **instructor-led** Workshop "Buil
 
 ## Lab Overview
 
-In this hands-on lab, you'll build Azure AI Search Knowledge Bases across a refreshed five-part flow: search indexes, Microsoft Speedbird Search MCP server, Fabric IQ, Work IQ, and a combined Work IQ + Fabric IQ experience. By the end, you'll have flexible KBs that blend indexed, structured, workplace, and web-grounded knowledge sources.
+In this hands-on lab, you'll build Azure AI Search Knowledge Bases across a refreshed five-part flow: search indexes, Web IQ MCP server, Fabric IQ, Work IQ, and a combined Work IQ + Fabric IQ experience. By the end, you'll have flexible KBs that blend indexed, structured, workplace, and web-grounded knowledge sources.
 
 ## Prerequisites
 
@@ -24,7 +24,7 @@ To get the most out of this lab, you should have a basic understanding of the fo
 To begin, open the **notebooks/** folder and start with **part1-standard-foundry-iq-kb.ipynb**. Work through all 5 notebooks sequentially:
 
 1. **part1-standard-foundry-iq-kb.ipynb** — Build a multi-source KB with the restored HR and health search indexes
-2. **part2-search-mcp-kb.ipynb** — Add Microsoft Speedbird Search through an MCP knowledge source
+2. **part2-search-mcp-kb.ipynb** — Add Web IQ through an MCP knowledge source
 3. **part3-fabric-iq-to-kb.ipynb** — Add Fabric IQ through a Fabric Ontology knowledge source
 4. **part4-work-iq-to-kb.ipynb** — Add Work IQ as a first-party knowledge source
 5. **part5-work-iq-fabric-iq-to-kb.ipynb** — Combine Work IQ and Fabric IQ in one KB

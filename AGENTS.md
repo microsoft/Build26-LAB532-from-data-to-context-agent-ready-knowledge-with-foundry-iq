@@ -59,10 +59,9 @@ These rules apply to all `.ipynb` files in `notebooks/`.
 - Use plain dashes (`-`) only in lists, not as clause separators in running text.
 
 ### Structure (per notebook)
-- **First cell**: Combined title + scenario lore + `**🎯 Mission**` bullets + `## The building blocks` explanation. Do not use separate cells for these.
+- **First cell**: Combined title + scenario lore + `**🎯 Mission**` bullets.
 - **Lore/scenario**: Written as a Day X narrative ("Day 1 at Zava…") that motivates why the attendee needs the technical feature being taught.
 - **Mission bullets**: Three items matching what the attendee will build. The `## ✅ Mission complete` cell at the end should cover the same three outcomes, but may expand on them with fuller explanations.
-- **Building blocks**: Explain only concepts that are NEW in this notebook. Do not re-explain concepts already introduced in earlier parts.
+- **Building blocks**: Optional. If included, explain only concepts that are NEW in this notebook and avoid re-explaining concepts already introduced in earlier parts.
 - **Last cell** (before the Continue link): `## ✅ Mission complete` with `**What you built:**` and three `✓` bullets. The capstone notebook (Part 5) uses `**What you built across the lab:**` instead.
-- **Source Hunt**: Include a `### 🔍 Source Hunt` markdown cell after the references print cell in each notebook.
-- **Try your own**: Include a `> 💡 **Try your own:**` callout in the description cell before each main query cell.
+- **Source Hunt**: Include a `#### 🔍 Source Hunt` markdown cell after the references print cell in each notebook.
