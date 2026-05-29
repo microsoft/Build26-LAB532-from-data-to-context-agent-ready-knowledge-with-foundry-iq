@@ -100,11 +100,9 @@ if (-not (Test-Path $reqFile)) {
 }
 if (-not (Test-Path $reqFile)) { throw "No requirements file found" }
 
-$wheelsDir = Join-Path $repoParent "wheels"
-
 Write-Output "Installing Python dependencies..."
 & $venvPy -m pip install --upgrade pip --quiet 2>$null
-& $venvPy -m pip install -r $reqFile --find-links $wheelsDir --quiet 2>$null
+& $venvPy -m pip install -r $reqFile --quiet 2>$null
 
 # Run the lakehouse creation script
 $createScript = Join-Path $repoRoot "create-lakehouse.py"
