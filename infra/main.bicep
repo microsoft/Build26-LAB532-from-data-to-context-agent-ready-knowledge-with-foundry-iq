@@ -364,7 +364,7 @@ resource fabricCapacity 'Microsoft.Fabric/capacities@2023-11-01' = if (deployFab
 }
 
 @description('Fabric capacity name')
-output FABRIC_CAPACITY_NAME string = fabricCapacity.name
+output FABRIC_CAPACITY_NAME string = deployFabricCapacity ? fabricCapacity.name : ''
 
 @description('Fabric capacity resource ID')
 output FABRIC_CAPACITY_ID string = deployFabricCapacity ? fabricCapacity.id : ''
