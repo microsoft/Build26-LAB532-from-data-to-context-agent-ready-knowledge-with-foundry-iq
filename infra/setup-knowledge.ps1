@@ -36,9 +36,6 @@ AZURE_TENANT_ID=$TenantId
 
 # Fabric configuration (populated by lakehouse setup if capacity was deployed)
 FABRIC_CAPACITY_ID=
-
-# GitHub Token (optional for Part 5 MCP server scenarios)
-# GITHUB_TOKEN=
 "@
 
 # Write .env to repo root WITHOUT BOM
