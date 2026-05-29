@@ -7,6 +7,9 @@
     },
     "location": {
       "value": "${AZURE_LOCATION}"
+    },
+    "deployFabricCapacity": {
+      "value": "${DEPLOY_FABRIC_CAPACITY=true}"
     }
   }
 }

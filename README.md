@@ -19,10 +19,7 @@ To get started in a guided lab session:
 
 ### 🏠 Getting started in your own environment
 
-If you're following these steps at your own pace:
-- Clone this repository
-- Set up your development environment (see [lab/README.md](lab/README.md) for prerequisites)
-- Configure Azure AI Search, Azure OpenAI, and related services using the `.env.sample` file
+Follow the steps in the [self-deployment guide](deploy_yourself.md).
 
 ### 🧠 Learning Outcomes
 
@@ -35,7 +32,7 @@ By the end of this session, you will be able to:
 
 ### 💻 Technologies Used
 
-1. Azure AI Search (agentic retrieval, knowledge bases)
+1. Foundry IQ (Azure AI Search)
 1. Azure OpenAI (gpt-5.4-mini, text-embedding-3-large)
 1. Model Context Protocol (MCP)
 1. Microsoft Fabric IQ and Work IQ

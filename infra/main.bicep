@@ -6,6 +6,9 @@
 @description('Principal ID for role assignments (provided by azd)')
 param principalId string
 
+@description('Whether to deploy Fabric capacity')
+param deployFabricCapacity bool = true
+
 @description('User email/UPN for Fabric capacity administration')
 param fabricAdminUpn string = ''
 
@@ -341,7 +344,7 @@ output AZURE_OPENAI_CHATGPT_DEPLOYMENT string = llmModelDeployment.name
 // ===============================================
 
 @description('Microsoft Fabric capacity for lakehouse workloads')
-resource fabricCapacity 'Microsoft.Fabric/capacities@2023-11-01' = {
+resource fabricCapacity 'Microsoft.Fabric/capacities@2023-11-01' = if (deployFabricCapacity) {
   name: '${resourcePrefix}fabric${uniqueSuffix}'
   location: location
   sku: {
@@ -361,7 +364,10 @@ resource fabricCapacity 'Microsoft.Fabric/capacities@2023-11-01' = {
 }
 
 @description('Fabric capacity name')
-output FABRIC_CAPACITY_NAME string = fabricCapacity.name
+output FABRIC_CAPACITY_NAME string = deployFabricCapacity ? fabricCapacity.name : ''
 
 @description('Fabric capacity resource ID')
-output FABRIC_CAPACITY_ID string = fabricCapacity.id
+output FABRIC_CAPACITY_ID string = deployFabricCapacity ? fabricCapacity.id : ''
+
+@description('Azure tenant ID for deployment')
+output AZURE_TENANT_ID string = tenant().tenantId
