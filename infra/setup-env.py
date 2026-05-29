@@ -19,7 +19,7 @@ headers = {"Authorization": f"Bearer {token}"}
 
 
 def post(url):
-    response = requests.post(url, headers=headers)
+    response = requests.post(url, headers=headers, timeout=120)
     response.raise_for_status()
     return response.json()
 
