@@ -10,19 +10,17 @@ python3 -m pip install -r notebooks/requirements.txt --quiet 2>/dev/null
 python3 infra/setup-env.py
 
 # Create indexes and upload data
-echo "Creating search indexes and uploading data..."
+echo "Running knowledge setup..."
 python3 infra/create-knowledge.py
-echo "Indexes created and data uploaded"
 
 # Set up Fabric Lakehouse (if capacity was deployed)
 if [ -n "$FABRIC_CAPACITY_ID" ]; then
     echo "Setting up Fabric Lakehouse..."
     python3 infra/create-lakehouse.py
-    echo "Fabric Lakehouse setup complete"
 fi
 
 # Note: Email seeding (seed-emails.ps1) requires a service principal with
 # Mail.Send application permission and is only used in the Skillable hosted lab.
 # For self-deploy, Part 4 (Work IQ) will use your own mailbox data.
 
-echo "Postprovision complete! Open notebooks/ to start the lab."
+echo "Postprovision complete! If there were no errors, you can open notebooks/ to start the lab."
