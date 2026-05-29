@@ -32,7 +32,7 @@ By the end of this session, you will be able to:
 
 ### 💻 Technologies Used
 
-1. Azure AI Search (agentic retrieval, knowledge bases)
+1. Foundry IQ (Azure AI Search)
 1. Azure OpenAI (gpt-5.4-mini, text-embedding-3-large)
 1. Model Context Protocol (MCP)
 1. Microsoft Fabric IQ and Work IQ
