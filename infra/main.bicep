@@ -345,7 +345,7 @@ resource fabricCapacity 'Microsoft.Fabric/capacities@2023-11-01' = {
   name: '${resourcePrefix}fabric${uniqueSuffix}'
   location: location
   sku: {
-    name: 'F2'
+    name: 'F4'
     tier: 'Fabric'
   }
   properties: {
