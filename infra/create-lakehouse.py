@@ -25,6 +25,7 @@ import csv
 import io
 import json
 import os
+import random
 import sys
 import time
 import traceback
@@ -43,6 +44,8 @@ FABRIC_API_BASE = "https://api.fabric.microsoft.com/v1"
 ONELAKE_DFS_URL = "https://onelake.dfs.fabric.microsoft.com"
 FABRIC_SCOPE = "https://api.fabric.microsoft.com/.default"
 STORAGE_SCOPE = "https://storage.azure.com/.default"
+FABRIC_RETRY_ATTEMPTS = 6
+FABRIC_RETRYABLE_STATUS_CODES = (429, 500, 502, 503, 504)
 
 GITHUB_RAW_BASE = (
     "https://raw.githubusercontent.com/microsoft/ai-tour-26-zava-diy-dataset-plus-mcp"
@@ -116,14 +119,61 @@ def fabric_headers() -> dict:
     }
 
 
+def parse_retry_after(value: str | None) -> float | None:
+    """Parse Retry-After from a Fabric throttling response."""
+    if value is None:
+        return None
+    try:
+        return max(float(value), 0)
+    except (TypeError, ValueError):
+        return None
+
+
+def sleep_for_retry(status_code: int, response: requests.Response, attempt: int) -> float:
+    """Return the delay to wait before retrying a throttled or transient request."""
+    retry_after = parse_retry_after(response.headers.get("Retry-After"))
+    if status_code == 429 and retry_after is not None:
+        return retry_after
+    return min(2**attempt, 30) + random.uniform(0, 1)
+
+
+def fabric_request(method: str, url: str, **kwargs) -> requests.Response:
+    """Make a Fabric REST call with retry support for throttling and transient failures."""
+    request_kwargs = dict(kwargs)
+    headers = request_kwargs.pop("headers", None) or fabric_headers()
+    timeout = request_kwargs.pop("timeout", 120)
+
+    for attempt in range(1, FABRIC_RETRY_ATTEMPTS + 1):
+        response = requests.request(
+            method=method,
+            url=url,
+            headers=headers,
+            timeout=timeout,
+            **request_kwargs,
+        )
+
+        if response.status_code not in FABRIC_RETRYABLE_STATUS_CODES or attempt == FABRIC_RETRY_ATTEMPTS:
+            return response
+
+        delay = sleep_for_retry(response.status_code, response, attempt)
+        log_message(
+            "Throttled or transient Fabric API failure "
+            f"({method} {url} -> HTTP {response.status_code}). "
+            f"Retrying in {delay:.1f}s (attempt {attempt + 1}/{FABRIC_RETRY_ATTEMPTS})."
+        )
+        time.sleep(delay)
+
+    raise RuntimeError("Fabric request retry loop exhausted without returning a response")
+
+
 def fabric_get(url: str) -> requests.Response:
-    """GET helper for Fabric REST APIs."""
-    return requests.get(url, headers=fabric_headers(), timeout=120)
+    """GET helper for Fabric REST APIs with throttling-aware retries."""
+    return fabric_request("GET", url)
 
 
 def fabric_post(url: str, payload: dict | None = None) -> requests.Response:
-    """POST helper for Fabric REST APIs."""
-    return requests.post(url, headers=fabric_headers(), json=payload, timeout=120)
+    """POST helper for Fabric REST APIs with throttling-aware retries."""
+    return fabric_request("POST", url, json=payload)
 
 
 def resolve_capacity_id(capacity_id_or_arm: str) -> str:
@@ -135,7 +185,7 @@ def resolve_capacity_id(capacity_id_or_arm: str) -> str:
     # It's an ARM resource ID — look up the Fabric GUID via the capacities API
     log_message("Resolving ARM capacity ID to Fabric GUID...")
     url = f"{FABRIC_API_BASE}/capacities"
-    resp = requests.get(url, headers=fabric_headers())
+    resp = fabric_get(url)
     resp.raise_for_status()
 
     # Extract capacity name from ARM ID (last segment)
@@ -154,7 +204,7 @@ def create_workspace(name: str, capacity_id: str) -> dict:
     url = f"{FABRIC_API_BASE}/workspaces"
     payload = {"displayName": name, "capacityId": capacity_id}
     log_message(f"Creating workspace '{name}' on capacity {capacity_id[:12]}...")
-    resp = requests.post(url, headers=fabric_headers(), json=payload)
+    resp = fabric_post(url, payload)
 
     if resp.status_code == 201:
         data = resp.json()
@@ -171,7 +221,7 @@ def create_workspace(name: str, capacity_id: str) -> dict:
 def get_existing_workspace(name: str) -> dict:
     """Find an existing workspace by name."""
     url = f"{FABRIC_API_BASE}/workspaces"
-    resp = requests.get(url, headers=fabric_headers())
+    resp = fabric_get(url)
     resp.raise_for_status()
     for ws in resp.json().get("value", []):
         if ws["displayName"] == name:
@@ -192,7 +242,7 @@ def add_workspace_member(workspace_id: str, user_oid: str, user_email: str, role
         "role": role,
     }
     log_message(f"Adding '{user_email}' (OID: {user_oid}) as {role} to workspace {workspace_id[:12]}...")
-    resp = requests.post(url, headers=fabric_headers(), json=payload)
+    resp = fabric_post(url, payload)
     if resp.status_code in (200, 201):
         log_message(f"User added as {role} successfully.")
     elif resp.status_code == 409:
@@ -206,7 +256,7 @@ def create_lakehouse(workspace_id: str, name: str) -> dict:
     url = f"{FABRIC_API_BASE}/workspaces/{workspace_id}/lakehouses"
     payload = {"displayName": name}
     log_message(f"Creating lakehouse '{name}'...")
-    resp = requests.post(url, headers=fabric_headers(), json=payload)
+    resp = fabric_post(url, payload)
 
     if resp.status_code == 201:
         data = resp.json()
@@ -223,7 +273,7 @@ def create_lakehouse(workspace_id: str, name: str) -> dict:
 def get_existing_lakehouse(workspace_id: str, name: str) -> dict:
     """Find an existing lakehouse by name."""
     url = f"{FABRIC_API_BASE}/workspaces/{workspace_id}/lakehouses"
-    resp = requests.get(url, headers=fabric_headers())
+    resp = fabric_get(url)
     resp.raise_for_status()
     for lh in resp.json().get("value", []):
         if lh["displayName"] == name:
@@ -236,7 +286,7 @@ def get_existing_lakehouse(workspace_id: str, name: str) -> dict:
 def get_lakehouse_properties(workspace_id: str, lakehouse_id: str) -> dict:
     """Get lakehouse properties including OneLake paths."""
     url = f"{FABRIC_API_BASE}/workspaces/{workspace_id}/lakehouses/{lakehouse_id}"
-    resp = requests.get(url, headers=fabric_headers())
+    resp = fabric_get(url)
     resp.raise_for_status()
     return resp.json()
 
@@ -376,7 +426,7 @@ def load_table(
         "formatOptions": {"header": True, "delimiter": ",", "format": "Csv"},
     }
     log_message(f"Loading table '{table_name}' from {filename}...")
-    resp = requests.post(url, headers=fabric_headers(), json=payload)
+    resp = fabric_post(url, payload)
 
     if resp.status_code == 202:
         location = resp.headers.get("Location", "")
@@ -396,7 +446,7 @@ def poll_operation(
 
     start = time.time()
     while time.time() - start < timeout:
-        resp = requests.get(poll_url, headers=fabric_headers())
+        resp = fabric_get(poll_url)
         if resp.status_code == 200:
             data = resp.json()
             status = data.get("status", data.get("Status", ""))
