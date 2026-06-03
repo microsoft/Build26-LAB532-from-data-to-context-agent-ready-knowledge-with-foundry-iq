@@ -774,6 +774,11 @@ def main():
         if not workspace_id:
             log_message("ERROR: Workspace ID is required (or set FABRIC_CAPACITY_ID to auto-create).")
             sys.exit(1)
+        update_root_env({"FABRIC_WORKSPACE_ID": workspace_id})
+        log_message("Updated repo root .env with FABRIC_WORKSPACE_ID")
+    else:
+        update_root_env({"FABRIC_WORKSPACE_ID": workspace_id})
+        log_message("Updated repo root .env with FABRIC_WORKSPACE_ID")
 
     log_message(f"Workspace ID: {workspace_id}")
     log_message(f"Lakehouse Name: {LAKEHOUSE_NAME}")
