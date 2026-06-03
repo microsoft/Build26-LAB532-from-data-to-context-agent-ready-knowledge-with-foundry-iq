@@ -756,12 +756,9 @@ def main():
     # Resolve workspace: use provided ID, or create one on the given capacity
     workspace_id = WORKSPACE_ID
     if not workspace_id and FABRIC_CAPACITY_ID:
-        # Only resolve the capacity when we actually need it (to create a
-        # workspace). Resolving unconditionally would call the Fabric API
-        # and could fail/exit even when a valid WORKSPACE_ID is set.
+        # Only resolve the capacity when we actually need it (to create a workspace)
         capacity_guid = resolve_capacity_id(FABRIC_CAPACITY_ID)
-        # Persist the resolved GUID immediately so it's available even if a
-        # later step fails.
+        # Persist the resolved GUID immediately so it's available even if later step fails
         update_root_env({"FABRIC_CAPACITY_ID": capacity_guid})
         log_message("Updated repo root .env with FABRIC_CAPACITY_ID")
         log_message("No workspace ID provided. Creating workspace on Fabric capacity...")
