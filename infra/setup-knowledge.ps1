@@ -7,7 +7,8 @@ param(
   [string]$TenantId = "",
   [string]$ProjectEndpoint = "",
   [string]$ProjectResourceId = "",
-  [string]$ProjectConnectionName = "kb-mcp-connection"
+  [string]$ProjectConnectionName = "kb-mcp-connection",
+  [string]$CapacityId = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -35,7 +36,7 @@ AZURE_OPENAI_EMBEDDING_DEPLOYMENT=$EmbeddingDeployment
 AZURE_TENANT_ID=$TenantId
 
 # Fabric configuration (populated by lakehouse setup if capacity was deployed)
-FABRIC_CAPACITY_ID=
+FABRIC_CAPACITY_ID=$CapacityId
 "@
 
 # Write .env to repo root WITHOUT BOM
