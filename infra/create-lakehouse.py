@@ -756,18 +756,29 @@ def main():
     # Resolve workspace: use provided ID, or create one on the given capacity
     workspace_id = WORKSPACE_ID
     if not workspace_id and FABRIC_CAPACITY_ID:
-        log_message("No workspace ID provided. Creating workspace on Fabric capacity...")
+        # Only resolve the capacity when we actually need it (to create a workspace)
         capacity_guid = resolve_capacity_id(FABRIC_CAPACITY_ID)
+        # Persist the resolved GUID immediately so it's available even if later step fails
+        update_root_env({"FABRIC_CAPACITY_ID": capacity_guid})
+        log_message("Updated repo root .env with FABRIC_CAPACITY_ID")
+        log_message("No workspace ID provided. Creating workspace on Fabric capacity...")
         # Use a unique workspace name to avoid collisions with leftover
         # workspaces from previous lab sessions in the same tenant.
         workspace_name = f"ZavaDIY-{uuid.uuid4().hex[:8]}"
         ws = create_workspace(workspace_name, capacity_guid)
         workspace_id = ws["id"]
+        update_root_env({"FABRIC_WORKSPACE_ID": workspace_id})
+        log_message("Updated repo root .env with FABRIC_WORKSPACE_ID")
     elif not workspace_id:
         workspace_id = input("Enter your Fabric Workspace ID: ").strip()
         if not workspace_id:
             log_message("ERROR: Workspace ID is required (or set FABRIC_CAPACITY_ID to auto-create).")
             sys.exit(1)
+        update_root_env({"FABRIC_WORKSPACE_ID": workspace_id})
+        log_message("Updated repo root .env with FABRIC_WORKSPACE_ID")
+    else:
+        update_root_env({"FABRIC_WORKSPACE_ID": workspace_id})
+        log_message("Updated repo root .env with FABRIC_WORKSPACE_ID")
 
     log_message(f"Workspace ID: {workspace_id}")
     log_message(f"Lakehouse Name: {LAKEHOUSE_NAME}")
@@ -864,14 +875,8 @@ def main():
             log_message("\nAll tables and ontology setup completed successfully!")
             if ontology:
                 log_message(f"Ontology: {FABRIC_ONTOLOGY_NAME} ({ontology['id']})")
-            # Write outputs to repo root .env so notebooks can find them
-            env_outputs = {
-                "FABRIC_WORKSPACE_ID": workspace_id,
-            }
-            if ontology:
-                env_outputs["FABRIC_ONTOLOGY_ID"] = ontology["id"]
-            update_root_env(env_outputs)
-            log_message(f"Updated repo root .env with {', '.join(env_outputs.keys())}")
+                update_root_env({"FABRIC_ONTOLOGY_ID": ontology["id"]})
+                log_message("Updated repo root .env with FABRIC_ONTOLOGY_ID")
             return True
         else:
             log_message("\nWARNING: Some tables or ontology setup failed.")
