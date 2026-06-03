@@ -142,7 +142,7 @@ def fabric_request(method: str, url: str, **kwargs) -> requests.Response:
     request_kwargs = dict(kwargs)
     headers = request_kwargs.pop("headers", None) or fabric_headers()
     timeout = request_kwargs.pop("timeout", 120)
-    response = None
+
     for attempt in range(1, FABRIC_RETRY_ATTEMPTS + 1):
         response = requests.request(
             method=method,
@@ -162,6 +162,8 @@ def fabric_request(method: str, url: str, **kwargs) -> requests.Response:
             f"Retrying in {delay:.1f}s (attempt {attempt + 1}/{FABRIC_RETRY_ATTEMPTS})."
         )
         time.sleep(delay)
+
+    raise RuntimeError("Fabric request retry loop exhausted without returning a response")
 
 
 def fabric_get(url: str) -> requests.Response:
