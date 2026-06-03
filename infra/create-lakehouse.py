@@ -755,14 +755,20 @@ def main():
 
     # Resolve workspace: use provided ID, or create one on the given capacity
     workspace_id = WORKSPACE_ID
+    capacity_guid = ""
+    if FABRIC_CAPACITY_ID:
+        capacity_guid = resolve_capacity_id(FABRIC_CAPACITY_ID)
+        # Persist the resolved GUID immediately so it's available even if a
+        # later step fails.
+        update_root_env({"FABRIC_CAPACITY_ID": capacity_guid})
     if not workspace_id and FABRIC_CAPACITY_ID:
         log_message("No workspace ID provided. Creating workspace on Fabric capacity...")
-        capacity_guid = resolve_capacity_id(FABRIC_CAPACITY_ID)
         # Use a unique workspace name to avoid collisions with leftover
         # workspaces from previous lab sessions in the same tenant.
         workspace_name = f"ZavaDIY-{uuid.uuid4().hex[:8]}"
         ws = create_workspace(workspace_name, capacity_guid)
         workspace_id = ws["id"]
+        update_root_env({"FABRIC_WORKSPACE_ID": workspace_id})
     elif not workspace_id:
         workspace_id = input("Enter your Fabric Workspace ID: ").strip()
         if not workspace_id:
