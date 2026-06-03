@@ -136,7 +136,8 @@ powershell -ExecutionPolicy Bypass -File $setupLocal `
   -EmbeddingDeployment $embeddingDeployment `
   -TenantId $tenantId `
   -ProjectEndpoint $projectEndpoint `
-  -ProjectResourceId $projectResourceId *>> $logFile
+  -ProjectResourceId $projectResourceId `
+  -CapacityId $fabricCapacityId *>> $logFile
 
 # Set up Fabric Lakehouse
 if ($fabricCapacityId) {
