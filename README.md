@@ -17,6 +17,8 @@ To get started in a guided lab session:
 - Open the **notebooks/** folder in Visual Studio Code
 - Start with **part1-standard-foundry-iq-kb.ipynb** and work through all 5 notebooks sequentially
 
+> **Prefer C#?** A standalone .NET track mirrors all 5 parts as real, compiled C# code. See [`notebooks/csharp-exercise/`](notebooks/csharp-exercise/README.md).
+
 ### 🏠 Getting started in your own environment
 
 Follow the steps in the [self-deployment guide](deploy_yourself.md).

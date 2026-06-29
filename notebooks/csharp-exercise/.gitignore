@@ -1,0 +1,22 @@
+# Secrets — never commit
+.env
+.env.local
+
+# Build output
+bin/
+obj/
+
+# User-specific
+*.user
+*.suo
+.vs/
+
+# create-indexes script log
+infra/index-creation.log
+
+
+# setup-lakehouse.ps1 / create-lakehouse.py artifacts
+infra/.env
+infra/.venv/
+infra/*.log
+
