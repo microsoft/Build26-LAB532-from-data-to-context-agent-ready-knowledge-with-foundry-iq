@@ -111,6 +111,9 @@ This lab includes 5 progressive notebooks covering different knowledge base and 
 
 Start with **part1-standard-foundry-iq-kb.ipynb** in the **notebooks/** folder and progress through each notebook sequentially.
 
+> [!NOTE]
+> **Prefer C#?** A standalone .NET track mirrors all 5 parts as real, compiled C# code in **notebooks/csharp-exercise/**. It runs against the same pre-provisioned resources. Open **notebooks/csharp-exercise/README.md** and follow the Parts there instead of the Python notebooks.
+
 > [!TIP]
 > **Bonus: Copilot CLI sidequest** - Each notebook includes a bonus section that prints an MCP configuration for the knowledge base you just created. Follow the instructions in **notebooks/copilot-cli-sidequest.md** to add it to GitHub Copilot CLI and query your KB directly from the terminal.
 
