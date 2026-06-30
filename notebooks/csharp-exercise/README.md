@@ -7,15 +7,15 @@ Each Part is one C# file + one markdown guide:
 
 | Part | C# file | Guide |
 |------|---------|-------|
-| 1 | `Parts/part1-standard-foundry-iq-kb.cs` | [`docs/part1.md`](docs/part1.md) |
-| 2 | `Parts/part2-web-iq-to-kb.cs`  | [`docs/part2.md`](docs/part2.md) |
-| 3 | `Parts/part3-fabric-iq-to-kb.cs`       | [`docs/part3.md`](docs/part3.md) |
-| 4 | `Parts/part4-work-iq-to-kb.cs`         | [`docs/part4.md`](docs/part4.md) |
-| 5 | `Parts/part5-work-iq-fabric-iq-to-kb.cs` | [`docs/part5.md`](docs/part5.md) |
+| 1 | `Parts/part1-standard-foundry-iq-kb.cs` | [`labs/part1.md`](labs/part1.md) |
+| 2 | `Parts/part2-web-iq-to-kb.cs`  | [`labs/part2.md`](labs/part2.md) |
+| 3 | `Parts/part3-fabric-iq-to-kb.cs`       | [`labs/part3.md`](labs/part3.md) |
+| 4 | `Parts/part4-work-iq-to-kb.cs`         | [`labs/part4.md`](labs/part4.md) |
+| 5 | `Parts/part5-work-iq-fabric-iq-to-kb.cs` | [`labs/part5.md`](labs/part5.md) |
 
 ## How a Part works
 
-1. Open the matching `docs/partN.md` for the narrative + step explanations
+1. Open the matching `labs/partN.md` for the narrative + step explanations
 2. Open the `Parts/partN-*.cs` file side-by-side
 3. Each `#region Step N` is collapsible — open one at a time, **uncomment** the code, read it
 4. When all regions are uncommented, run:
@@ -43,7 +43,7 @@ Pick one of the two paths below — the lab works the same way either way.
 
 The hosted lab environment comes with a pre-provisioned Azure AI Search service, an
 OpenAI resource, and the `hrdocs` + `healthdocs` indexes already populated. You don't
-need to run `azd up` or `restore-rest.py`.
+need to run `azd up`.
 
 ```powershell
 Copy-Item .env.sample .env
@@ -54,41 +54,29 @@ dotnet run -- 1
 
 ### Path B — Deploy yourself
 
-Use your own Azure subscription. See [`infra/deploy-yourself/README.md`](infra/deploy-yourself/README.md)
-for the full guide. TL;DR:
+Use your own Azure subscription. The C# track reuses the **same** infrastructure as the
+Python lab, so follow the repo-root [`deploy_yourself.md`](../../deploy_yourself.md) guide.
+A single `azd up` provisions Search + Foundry + OpenAI, writes a repo-root `.env`,
+creates the `hrdocs` + `healthdocs` indexes, uploads the sample data, and sets up the
+Fabric Lakehouse + ontology. TL;DR:
 
 ```powershell
-# 1) Provision Search + Foundry + OpenAI deployments (gpt-5.4-mini, text-embedding-3-large)
-cd ..\..\infra
+# 1) From the repo root: provision everything + write .env
+azd auth login
 azd up
 
-# 2) Copy outputs into .env
-cd ..\notebooks\csharp-exercise
-Copy-Item .env.sample .env
-# Fill in AZURE_SEARCH_*, AZURE_OPENAI_*, AZURE_TENANT_ID from azd outputs
-
-# 3) Populate the hrdocs + healthdocs indexes (REST-based, no broken SDK)
-pip install python-dotenv requests
-python infra\deploy-yourself\restore-rest.py
-
-# 4) Run a Part
+# 2) Run a Part (Config.cs auto-discovers the repo-root .env azd wrote)
+cd notebooks\csharp-exercise
 az login --tenant $env:AZURE_TENANT_ID
 dotnet run -- 1
 ```
 
-For Parts 2, 3, 5 you'll also need:
+For Parts 2, 3, 4, 5 you'll also need:
 
-- **Part 2**: `WEB_IQ_KEY` — get an `x-apikey` from <https://api.microsoft.ai>
-- **Parts 3, 5**: a Fabric Lakehouse + ontology. The repo includes a script that
-  provisions both end-to-end from a Fabric capacity:
-
-  ```powershell
-  cd ..\..\infra
-  .\setup-lakehouse.ps1 -CapacityId "<fabric-capacity-guid>" -TenantId "$env:AZURE_TENANT_ID"
-  # Copy the FABRIC_WORKSPACE_ID + FABRIC_ONTOLOGY_ID it prints into .env
-  ```
-
-  See [`infra/deploy-yourself/README.md`](infra/deploy-yourself/README.md#parts-3--5--fabric-iq) for details.
+- **Part 2**: `WEB_IQ_KEY` in `.env` — get an `x-apikey` from <https://api.microsoft.ai>
+- **Parts 3, 5**: `FABRIC_WORKSPACE_ID` + `FABRIC_ONTOLOGY_ID` in `.env`. `azd up`
+  provisions the Fabric Lakehouse + ontology and writes these values. See
+  [`deploy_yourself.md`](../../deploy_yourself.md) for details.
 - **Parts 3, 4, 5**: `az login --tenant $env:AZURE_TENANT_ID` so your user token can be
   forwarded as `x-ms-query-source-authorization` for delegated retrieval
 
@@ -96,25 +84,22 @@ For Parts 2, 3, 5 you'll also need:
 
 ```
 notebooks/csharp-exercise/
-├── docs/                       # 📖 narrative guides
+├── labs/                       # 📖 narrative guides
 │   └── part1.md … part5.md
 ├── Parts/                      # ⭐ what you edit (uncomment regions)
 │   └── part1-…cs … part5-…cs
 ├── Shared/
-│   ├── Config.cs               # .env loader
+│   ├── Config.cs               # .env loader (walks up to the repo-root .env)
 │   ├── SearchKbClient.cs       # HttpClient over Azure AI Search 2026-05-01-preview KB REST
 │   └── McpKbAgent.cs           # MCP client + per-request headers for the KB endpoint
-├── infra/
-│   └── deploy-yourself/
-│       ├── README.md           # full deploy-yourself walkthrough
-│       └── restore-rest.py     # populates hrdocs + healthdocs via REST
 ├── Program.cs                  # arg dispatcher: runs Part1..Part5
 ├── KbBuilderAgent.csproj
 └── .env.sample
 
 # Reused from the repo root (shared with the Python lab):
-#   ../../data/       sample HR + health docs (index.json + .jsonl)
-#   ../../infra/      azd Bicep, Fabric lakehouse scripts
+#   ../../data/              sample HR + health docs (index.json + .jsonl)
+#   ../../infra/             azd Bicep, index seeding, Fabric lakehouse scripts
+#   ../../deploy_yourself.md self-deploy guide (azd up)
 ```
 
 ## Why this shape

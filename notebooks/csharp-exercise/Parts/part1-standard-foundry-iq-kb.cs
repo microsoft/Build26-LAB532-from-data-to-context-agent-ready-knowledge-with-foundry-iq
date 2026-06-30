@@ -9,7 +9,7 @@ using ModelContextProtocol.Client;
 namespace Lab532.Parts;
 
 // Part 1 — Build a multi-source KB over hrdocs + healthdocs, then talk to it
-// via an MAF agent wired to the KB's MCP endpoint. Follow docs/part1.md.
+// via an MAF agent wired to the KB's MCP endpoint. Follow labs/part1.md.
 public static class Part1
 {
     private const string HrIndex      = "hrdocs";

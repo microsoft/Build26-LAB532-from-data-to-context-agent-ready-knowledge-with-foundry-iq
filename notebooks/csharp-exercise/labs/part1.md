@@ -16,7 +16,8 @@ dotnet run -- 1
 ## Step 1 — Verify the indexes
 
 `hrdocs` and `healthdocs` are populated either by your hosted lab environment or by
-running `infra/deploy-yourself/restore-rest.py` once. Step 1 just prints what
+`azd up` when you deploy the lab yourself (see the repo-root
+[`deploy_yourself.md`](../../../deploy_yourself.md)). Step 1 just prints what
 you'll be working with — nothing to uncomment yet.
 
 ## Step 2 — Create two `searchIndex` knowledge sources

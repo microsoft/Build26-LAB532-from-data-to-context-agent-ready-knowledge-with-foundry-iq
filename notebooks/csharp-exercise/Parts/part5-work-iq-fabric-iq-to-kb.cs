@@ -9,7 +9,7 @@ using ModelContextProtocol.Client;
 namespace Lab532.Parts;
 
 // Part 5 — Combine restored indexes + Work IQ + Fabric IQ behind one MCP-backed agent.
-// Follow docs/part5.md. Requires:  az login --tenant $env:AZURE_TENANT_ID
+// Follow labs/part5.md. Requires:  az login --tenant $env:AZURE_TENANT_ID
 // 206 Partial Content is acceptable — one source can fail while others succeed.
 public static class Part5
 {

@@ -8,7 +8,7 @@ using ModelContextProtocol.Client;
 
 namespace Lab532.Parts;
 
-// Part 4 — Add Work IQ. The MCP agent must forward YOUR delegated token. Follow docs/part4.md.
+// Part 4 — Add Work IQ. The MCP agent must forward YOUR delegated token. Follow labs/part4.md.
 // Requires:  az login --tenant $env:AZURE_TENANT_ID
 public static class Part4
 {

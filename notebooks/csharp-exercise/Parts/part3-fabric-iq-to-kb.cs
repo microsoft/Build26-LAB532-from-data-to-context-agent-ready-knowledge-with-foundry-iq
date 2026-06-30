@@ -9,7 +9,7 @@ using ModelContextProtocol.Client;
 namespace Lab532.Parts;
 
 // Part 3 — Add Fabric IQ. The MCP agent must forward YOUR delegated token
-// (x-ms-query-source-authorization) for Fabric retrieves to work. Follow docs/part3.md.
+// (x-ms-query-source-authorization) for Fabric retrieves to work. Follow labs/part3.md.
 // Requires:  az login --tenant $env:AZURE_TENANT_ID
 public static class Part3
 {

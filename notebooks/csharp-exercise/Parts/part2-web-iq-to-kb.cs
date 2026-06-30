@@ -9,7 +9,7 @@ using ModelContextProtocol.Client;
 namespace Lab532.Parts;
 
 // Part 2 — Add Web IQ (web grounding via MCP) and talk to it through an MAF agent
-// pointed at the KB's MCP endpoint. Follow docs/part2.md.
+// pointed at the KB's MCP endpoint. Follow labs/part2.md.
 public static class Part2
 {
     private const string HrSource     = "hrdocs-knowledge-source";
