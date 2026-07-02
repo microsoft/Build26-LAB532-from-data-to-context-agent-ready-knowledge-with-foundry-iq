@@ -29,9 +29,11 @@ Idempotent re-creation.
 `kind: "fabricOntology"`. You pass the workspace + ontology IDs and Foundry IQ takes
 care of schema discovery.
 
-## Step 3 — Create the multi-source KB (extractiveData)
+## Step 3 — Create the multi-source KB (extractiveData) with a model attached
 
-Three sources, retrieval only.
+Three sources. `outputMode: "extractiveData"` still returns extracted chunks, but Fabric
+IQ needs an Azure OpenAI model on the KB to plan its ontology queries, so this KB passes
+`includeModel: true`. That attaches the `gpt-5.4-mini` deployment from your `.env`.
 
 ## Step 4 — Direct retrieve **with** the query-source token
 

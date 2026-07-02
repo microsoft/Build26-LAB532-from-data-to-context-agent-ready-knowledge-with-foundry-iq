@@ -108,8 +108,10 @@ notebooks/csharp-exercise/
   every code block is real, compiled, debugger-friendly C#.
 - **`#region Step N` labels** survive accidental toggle-uncomment and collapse nicely in
   the editor — you only see the step you're working on.
-- **KBs are pure retrieval** (`outputMode: extractiveData`, no model attached). Step 4
-  prints the raw chunks the KB returns so you can see what the agent will see.
+- **KBs use `outputMode: extractiveData`**, so Step 4 prints the raw chunks the KB
+  returns and you can see exactly what the agent will see. Parts 1, 2, and 4 attach no
+  model. Parts 3 and 5 attach an Azure OpenAI model because Fabric IQ needs one to plan
+  its ontology queries.
 - **One small Microsoft Agent Framework agent** wraps the KB via its MCP endpoint
   (`/knowledgebases/{name}/mcp`). `Shared/McpKbAgent.cs` handles the `api-key` and the
   delegated `x-ms-query-source-authorization` header (Parts 3, 4, 5).

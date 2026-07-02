@@ -45,7 +45,7 @@ public static class Part3
         // await SearchKbClient.PutAsync($"/knowledgesources('{FabricSource}')", fabricBody);
         #endregion
 
-        #region Step 3: Create the KB in extractiveData mode (no model attached)
+        #region Step 3: Create the KB in extractiveData mode with an Azure OpenAI model attached
         // var kbBody = SearchKbClient.KnowledgeBaseBody(
         //     name: KbName,
         //     description: "Multi-source KB combining restored indexes and Fabric Ontology",

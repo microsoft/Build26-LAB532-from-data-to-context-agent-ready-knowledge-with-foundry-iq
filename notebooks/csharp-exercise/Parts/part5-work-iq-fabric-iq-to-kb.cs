@@ -51,14 +51,14 @@ public static class Part5
         //     });
         #endregion
 
-        #region Step 3: Create the combined KB in extractiveData mode
+        #region Step 3: Create the combined KB in extractiveData mode with an Azure OpenAI model attached
         // var kbBody = SearchKbClient.KnowledgeBaseBody(
         //     name: KbName,
         //     description: "LAB532 KB combining restored indexes, Work IQ, and Fabric Ontology",
         //     sourceNames: new[] { HrSource, HealthSource, WorkSource, FabricSource },
         //     outputMode: "extractiveData",
         //     reasoning: "low",
-        // includeModel: true);
+        //     includeModel: true);
         // await SearchKbClient.PutAsync($"/knowledgebases('{KbName}')", kbBody);
         #endregion
 
