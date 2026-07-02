@@ -31,6 +31,9 @@ To begin, open the **notebooks/** folder and start with **part1-standard-foundry
 
 Once you've completed all 5 notebooks, return to this page and select **Next >** to view the wrap-up and summary section.
 
+> [!NOTE]
+> **Prefer C#?** A standalone .NET track mirrors all 5 parts as real, compiled C# code in [`notebooks/csharp-exercise`](../notebooks/csharp-exercise/README.md). It uses the same pre-provisioned resources, so you can follow it instead of the Python notebooks.
+
 ## Discussions
 
 If you’d like to contribute, raise an issue, or provide feedback, please open an issue in this repo.
